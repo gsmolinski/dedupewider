@@ -1,0 +1,21 @@
+---
+title: "Usage and algorithm explained"
+output: rmarkdown::html_vignette
+vignette: >
+  %\VignetteIndexEntry{Usage and algorithm explained}
+  %\VignetteEngine{knitr::rmarkdown}
+  %\VignetteEncoding{UTF-8}
+---
+
+```{r, include = FALSE}
+knitr::opts_chunk$set(
+  collapse = TRUE,
+  comment = "#>",
+  echo = FALSE
+)
+```
+
+```{r setup}
+library(dedupewider)
+library(kableExtra)
+```
