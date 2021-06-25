@@ -24,3 +24,5 @@ Suggests:
     testthat (>= 3.0.0)
 Config/testthat/edition: 3
 VignetteBuilder: knitr
+URL: https://github.com/gsmolinski/dedupewider
+BugReports: https://github.com/gsmolinski/dedupewider/issues
