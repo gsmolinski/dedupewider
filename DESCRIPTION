@@ -21,6 +21,8 @@ Imports: data.table (>= 1.14.0)
 Suggests: 
     rmarkdown,
     knitr,
+    kableExtra,
+    magrittr,
     testthat (>= 3.0.0)
 Config/testthat/edition: 3
 VignetteBuilder: knitr

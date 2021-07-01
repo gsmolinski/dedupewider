@@ -15,11 +15,11 @@ dedupe_wide(
 \arguments{
 \item{x}{A data.frame without column named '....idx' and any column which ends by four dots and number (e.g. 'column....2').}
 
-\item{cols_dedupe}{A character vector of columns' names in \code{x} used to dedupe. Deduplicated data from these columns will be saved into new columns, number of which is control by \code{max_new_cols}.}
+\item{cols_dedupe}{A character vector of length min. 2 of columns' names in \code{x} used to dedupe. Deduplicated data from these columns will be saved into new columns, number of which is control by \code{max_new_cols}.}
 
-\item{cols_expand}{A character vector of columns' names in \code{x} or \code{NULL} (means: none except those used to dedupe) indicating columns with data to keep in case of non-consistent data.}
+\item{cols_expand}{A character vector of columns' names in \code{x} or \code{NULL} (means: none except those used to dedupe) indicating columns with data to keep in case of non-consistent data, i.e. unique data from these columns will be saved into new columns, number of which is control by \code{max_new_cols}.}
 
-\item{max_new_cols}{A numeric vector length 1 or \code{NULL} (means: without limit) indicating how many new columns can be created to store data from columns used to dedupe. Cannot be lower than number of columns used to dedupe.}
+\item{max_new_cols}{A numeric vector length 1 or \code{NULL} (means: without limit) indicating how many new columns can be created to store data from columns used to dedupe. Cannot be lower than 1.}
 
 \item{enable_drop}{A logical vector length 1: should given column be dropped if (after deduplication) contains only missing data (\code{NA})? Applicable only to columns used to dedupe.}
 }
@@ -30,6 +30,10 @@ If duplicated data found - data.frame with changed columns' names and optionally
 Collapse many rows connected by duplicated data (which can exists in different
 rows and columns) to one, based on data in chosen columns, optionally putting
 non-consistent data into newly created additional columns.
+}
+\note{
+Internally, function is mainly based on \code{\link[=data.table]{data.table}} functions and thus enabling parallel computation
+is possible. To do this, just call \code{\link[data.table]{setDTthreads}} before calling \code{dedupe_wide} function.
 }
 \examples{
 x <- data.frame(tel_1 = c(111, 222, 444, 555),
