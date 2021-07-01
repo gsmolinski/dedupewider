@@ -1,5 +1,5 @@
 Package: dedupewider
-Title: Deduplication Across Multiple Columns
+Title: Deduplication Across Multiple Columns Using Transitive Relation
 Version: 0.0.0.9000
 Authors@R: 
     person("Grzegorz",
