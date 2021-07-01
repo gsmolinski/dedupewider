@@ -7,7 +7,7 @@
 #' @param x A data.frame without column named '....idx' and any column which ends by four dots and number (e.g. 'column....2').
 #' @param cols_dedupe A character vector of length min. 2 of columns' names in \code{x} used to dedupe. Deduplicated data from these columns will be saved into new columns, number of which is control by \code{max_new_cols}.
 #' @param cols_expand A character vector of columns' names in \code{x} or \code{NULL} (means: none except those used to dedupe) indicating columns with data to keep in case of non-consistent data, i.e. unique data from these columns will be saved into new columns, number of which is control by \code{max_new_cols}.
-#' @param max_new_cols A numeric vector length 1 or \code{NULL} (means: without limit) indicating how many new columns can be created to store data from columns used to dedupe. Cannot be lower than number of columns used to dedupe.
+#' @param max_new_cols A numeric vector length 1 or \code{NULL} (means: without limit) indicating how many new columns can be created to store data from columns used to dedupe. Cannot be lower 1.
 #' @param enable_drop A logical vector length 1: should given column be dropped if (after deduplication) contains only missing data (\code{NA})? Applicable only to columns used to dedupe.
 #'
 #' @return If duplicated data found - data.frame with changed columns' names and optionally additional columns (in some cases less columns). Otherwise data.frame without changes.
@@ -104,15 +104,15 @@ dedupe_wide <- function(x, cols_dedupe, cols_expand = NULL, max_new_cols = NULL,
 check_prerequisites <- function(x, cols_dedupe, cols_expand, max_new_cols, enable_drop) {
   if (!is.data.frame(x)) {
     stop(paste0("x must be of class data.frame, but is ", paste0(class(x), collapse = ", "), "."))
-  } else if (any(is.na(cols_dedupe)) || is.null(cols_dedupe)) {
+  } else if (anyNA(cols_dedupe) || is.null(cols_dedupe)) {
     stop(paste0("Argument passed to cols_dedupe cannot be NULL or contains NA."))
   } else if (length(cols_dedupe) < 2) {
     stop("Vector passed as argment to cols_dedupe must be of length 2 or more.")
   } else if (!all(cols_dedupe %in% names(x))) {
     stop(paste0("All columns passed as argument to cols_dedupe must exists as names of columns in x, now '"),
          paste0(cols_dedupe[!cols_dedupe %in% names(x)], collapse = ", "), "' are not present in x.")
-  } else if (any(is.na(cols_expand)) || is.null(cols_expand)) {
-    stop("Argument passed to cols_expand cannot be NULL or contains NA.")
+  } else if (anyNA(cols_expand)) {
+    stop("Argument passed to cols_expand cannot contains NA.")
   } else if (!all(cols_expand %in% names(x))) {
     stop(paste0("All columns passed as argument to cols_expand must exists as names of columns in x, now '"),
          paste0(cols_expand[!cols_expand %in% names(x)], collapse = ", "), "' are not present in x.")
@@ -122,8 +122,8 @@ check_prerequisites <- function(x, cols_dedupe, cols_expand, max_new_cols, enabl
     stop("In x cannot be column ends with 4 dots and number.") # using for new colums after expand or dedupe
   } else if (!is.null(max_new_cols) && (!is.numeric(max_new_cols) || is.na(max_new_cols) || length(max_new_cols) > 1)) {
     stop("Argument passed to max_new_cols must be of length 1, of type numeric and cannot be NA.")
-  } else if (!is.null(max_new_cols) && (max_new_cols < length(cols_dedupe))) {
-    stop("Argument passed to max_new_cols cannot be lower than length of argument passed to cols_dedupe.")
+  } else if (!is.null(max_new_cols) && (max_new_cols < 1)) {
+    stop("Argument passed to max_new_cols cannot be lower than 1.")
   } else if (!is.logical(enable_drop) || is.na(enable_drop) || length(enable_drop) > 1) {
     stop("Argument passed to enable_drop must be of length 1, of type logical and cannot be NA.")
   }

@@ -18,4 +18,214 @@ knitr::opts_chunk$set(
 ```{r setup}
 library(dedupewider)
 library(kableExtra)
+library(magrittr)
+library(data.table)
 ```
+
+```{r display-table}
+display_tbl <- function(x) {
+  kbl(x) %>% 
+  kable_paper(full_width = FALSE)
+}
+```
+
+## Introduction
+
+We can distinguish several types of deduplication when thinking about table - across one column we could use `duplicated()` (or `unique()`) to check (or remove) which records are duplicated; across one row we could iterate over rows and use the same `duplicated()` (or `unique()`) or gather multiple columns into one (by changing table from wide format to long) and then perform deduplication across one, long column.
+
+Finally, we can think of deduplication as a process of finding duplicated data across different columns *and* rows, enabling transitive relation:
+
+```{r}
+example_table <- data.frame(Tel_1 = c(111, 222, 444, 555),
+                            Tel_2 = c(222, 666, 666, 555),
+                            Name = paste0("name", 1:4))
+
+display_tbl(example_table)
+```
+
+In the example above, we could treat records in rows 1, 2 and 3 as the same record. Why? Because row 1 and 2 has one the same phone number (222), row 2 and 3 has one the same phone number (666) and, because row 1 is duplicated with row 2, row 2 is duplicated with row 3, then row 1 is duplicated with row 3. User can see the result of this specific deduplication by calling (after installation of package):
+
+    example("dedupe_wide", "dedupewider")
+
+This method was used in CATI surveys (especially on businesses databases) to minimize the chance that interviewers will call independently the same respondent and thus irritate her or him. It is a chance that the same, suitable person to participate in the survey, work in more than one company and that these companies exist as a separate records in the database (sometimes just as a separate companies, sometimes as a branches). When trying to find participant in company X, interviewer can be switched to company C to speak with employee E and the second interviewer, when calling company Y, can also be switched to company C to speak with employee E. If some data in database (like phone numbers) can be use to collapse companies X, Y and C to one record, the chance for this inconvenience will be much lower.
+
+## Usage
+
+After attach the package: `library(dedupewider)`, one function will be available to use: `dedupe_wide()`. We will show the usage of this function using the table presented below:
+
+```{r initial-table-usage}
+initial_table <- data.frame(tel_1 = c(111, 222, 444, 555),
+                            tel_2 = c(222, 666, 666, 555),
+                            tel_3 = c(NA, NA, NA, 555),
+                            tel_4 = c(NA, NA, NA, 555),
+                            tel_5 = c(NA, NA, NA, 555),
+                            name = paste0("name", 1:4),
+                            nace = c("01.19", "01.64", "55.90", "09.10"))
+display_tbl(initial_table)
+```
+
+We already know that rows 1, 2, 3 will be collapsed to one. Let's see the default behaviour of function:
+
+```{r usage-default, echo=TRUE, results='hide'}
+library(dedupewider)
+
+initial_table <- data.frame(tel_1 = c(111, 222, 444, 555),
+                            tel_2 = c(222, 666, 666, 555),
+                            tel_3 = c(NA, NA, NA, 555),
+                            tel_4 = c(NA, NA, NA, 555),
+                            tel_5 = c(NA, NA, NA, 555),
+                            name = paste0("name", 1:4),
+                            nace = c("01.19", "01.64", "55.90", "09.10"))
+
+table_deduplicated <- dedupe_wide(initial_table, cols_dedupe = paste0("tel_", 1:5),
+                                  cols_expand = "name")
+table_deduplicated
+```
+
+```{r usage-default-display}
+display_tbl(table_deduplicated)
+```
+
+We can see that:
+
+- columns used to dedupe are not just renamed, but also the number of columns is lower than initially. That's because argument `enable_drop` was set (be default) to `TRUE` - fifth column would contain only missing data (NA), so was removed
+- deduplication was performed also on the same row, so for company "name4" only one phone number was left
+- all unique information from column "name" was keeped and these columns were renamed
+- for the rest columns ("nace") just one code was keeped - it is always the data from the row which is closest to the beginning of the table
+- order of rows and columns was keeped
+
+Of course, columns passed to `cols_expand` are treat as separate columns, so data is not mixed:
+
+```{r usage-multiple-expand, echo=TRUE, results='hide'}
+table_deduplicated <- dedupe_wide(initial_table, cols_dedupe = paste0("tel_", 1:5),
+                                  cols_expand = c("name", "nace"))
+table_deduplicated
+
+```
+
+```{r usage-multiple-expand-display}
+display_tbl(table_deduplicated)
+```
+
+Sometimes user can think that there is a fixed number of new columns which will be enough (for example no more than 2 phone numbers to company will be needed). Argument `max_new_cols` can be use to set the number of max. new columns to create and it will be used to limit number of columns from `cols_dedupe` *and* `cols_expand`:
+
+```{r usage-max-new-cols, echo=TRUE, results='hide'}
+table_deduplicated <- dedupe_wide(initial_table, cols_dedupe = paste0("tel_", 1:5),
+                                  cols_expand = c("name", "nace"),
+                                  max_new_cols = 2)
+table_deduplicated
+```
+
+```{r usage-max-new-cols-display}
+display_tbl(table_deduplicated)
+```
+
+It is also important to note that this function was implemented using `data.table` and thus parallel computing is possible. To enable this, user can just call `data.table::setDTthreads()` before using `dedupe_wide()`:
+
+```{r usage-parallel, echo=TRUE, results='hide'}
+data.table::setDTthreads()
+dedupe_wide(initial_table, cols_dedupe = paste0("tel_", 1:5),
+                                  cols_expand = "name")
+```
+
+## Algorithm
+
+The aim of this section is to show algorithm used to find duplicated records - this can be use for cross-checking or can be a inspiration to implement more efficient solution if needed. Table below will be our starting point:
+
+```{r initial-table-algorithm}
+initial_table <- data.frame(tel_1 = c(111, 222, 333, 444, 333, 555,
+                                      666, 777, 333, 333, 333, 333),
+                            tel_2 = c(777, 666, NA, 666, NA, NA, NA, NA, NA, 777,
+                                      888, 777),
+                            tel_3 = c(999, NA, NA, 333, NA, NA, NA, NA, NA, 101, 102,
+                                      777),
+                            tel_4 = c(102, NA, NA, NA, NA, NA, NA, NA, NA, 103, NA, 103),
+                            name = paste0("name", 1:12))
+display_tbl(initial_table)
+```
+
+We can split the algorithm into two main steps - finding duplicates and cascade them.
+
+#### Find duplicates
+
+At first, we need to gather all columns which will be used for deduplication into one column, but keeping indexes to know which records belong to the same row (below only first 6 rows are shown):
+
+```{r gather-cols}
+x <- data.frame(tel_1 = c(111, 222, 333, 444, 333, 555,
+                                      666, 777, 333, 333, 333, 333),
+                            tel_2 = c(777, 666, NA, 666, NA, NA, NA, NA, NA, 777,
+                                      888, 777),
+                            tel_3 = c(999, NA, NA, 333, NA, NA, NA, NA, NA, 101, 102,
+                                      777),
+                            tel_4 = c(102, NA, NA, NA, NA, NA, NA, NA, NA, 103, NA, 103),
+                            name = paste0("name", 1:12))
+cols_dedupe <- paste0("tel_", 1:4)
+setDT(x)
+x[, ....idx := .I]
+x_tmp <- suppressWarnings(melt.data.table(x, id.vars = "....idx", measure.vars = cols_dedupe, na.rm = TRUE))
+x_tmp[, variable := NULL]
+display_tbl(head(x_tmp))
+```
+
+Now we can group by *value* and summarise indexes (column V1):
+
+```{r group-by-value}
+x_tmp[, V1 := list(list(....idx)), by = "value"][, ....idx := NULL]
+x_tmp <- unique(x_tmp, by = "value")
+x_tmp[, `:=`(filter_col = lengths(V1),
+                 value = NULL)]
+x_tmp <- x_tmp[filter_col > 1L]
+x_tmp[, V1 := lapply(V1, unique)][, `:=`(main_index = unlist(lapply(V1, min), use.names = FALSE),
+                                                    filter_col = lengths(V1))]
+display_tbl(x_tmp[, c("V1", "main_index")])
+```
+
+We want also to have a main index which will be used as a replace. It will be the lowest index, so later we can easily keep orginal order of rows.
+
+We can see that now not all indexes are connected as they should, e.g. index 7 is not connected with index 3, but should (because 7 and 3 are connected with 4).
+
+#### Cascade
+
+To fix this, we will - step by step, for each index - replace rest indexes by main index. At first, let's make a pairs main index - one of the rests indexes:
+
+```{r make-pairs-indexes}
+indexes_more_than_one_occurence <- x_tmp
+indexes_more_than_one_occurence_vector <- indexes_more_than_one_occurence[, list(indexes = unique(sort(unlist(V1, use.names = FALSE), decreasing = TRUE)))][["indexes"]]
+indexes_more_than_one_occurence[, V1 := lapply(V1, function(x) x[-which.min(x)])]
+indexes_more_than_one_occurence <- indexes_more_than_one_occurence[, list(rest_indexes = unlist(V1, use.names = FALSE)), by = main_index]
+setorder(indexes_more_than_one_occurence, -rest_indexes, -main_index)
+indexes_more_than_one_occurence <- unique(indexes_more_than_one_occurence)
+display_tbl(indexes_more_than_one_occurence)
+```
+
+We have also sorted them by descending order, at first by rest_indexes, then by main_index and removed duplicated pairs.
+
+We can now group by rest_indexes and for each group replace the next rest_index by previous main_index, e.g. for 12 we will have:
+
+```{r example-12}
+display_tbl(data.frame(main_index = c(10, 3, 1),
+                       rest_indexes = c(12, 10, 3)))
+```
+
+After iterate over each index (each iterate needs to end by reorder the table - again we need to sort them by descending order, at first by rest_indexes, then by main_index), removing duplicated: pairs and more than one occurence of rest_indexes, we will get:
+
+```{r}
+cascade_indexes <- function(indexes_more_than_one_occurence_vector, indexes_more_than_one_occurence) {
+  rest_indexes <- main_index <- filter <- NULL
+  for (i in indexes_more_than_one_occurence_vector) {
+    which <- which(indexes_more_than_one_occurence[["rest_indexes"]] == i)
+    value <- shift(indexes_more_than_one_occurence[which][["main_index"]], fill = i)
+    set(indexes_more_than_one_occurence, which, "rest_indexes", value)
+    setorder(indexes_more_than_one_occurence, -rest_indexes, -main_index)
+  }
+  indexes_more_than_one_occurence[, filter := fifelse(main_index == rest_indexes, FALSE, TRUE)]
+  indexes_more_than_one_occurence <- indexes_more_than_one_occurence[filter == TRUE][, filter := NULL]
+  indexes_more_than_one_occurence <- unique(indexes_more_than_one_occurence, by = "rest_indexes")
+  indexes_more_than_one_occurence
+}
+
+indexes_more_than_one_occurence <- cascade_indexes(indexes_more_than_one_occurence_vector, indexes_more_than_one_occurence)
+display_tbl(indexes_more_than_one_occurence)
+```
+
+The last thing to do is just to replace each rest_index by main_index in our main table (table passed to `dedupe_wide`), starting from the top of our pairs.
