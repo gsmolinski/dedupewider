@@ -13,6 +13,8 @@
 #' @return If duplicated data found - data.frame with changed columns' names and optionally additional columns (in some cases less columns). Otherwise data.frame without changes.
 #' @export
 #' @import data.table
+#' @note Internally, function is mainly based on \code{\link[=data.table]{data.table}} functions and thus enabling parallel computation
+#' is possible. To do this, just call \code{\link[data.table]{setDTthreads}} before calling \code{dedupe_wide} function.
 #' @examples
 #' x <- data.frame(tel_1 = c(111, 222, 444, 555),
 #'                 tel_2 = c(222, 666, 666, 555),
