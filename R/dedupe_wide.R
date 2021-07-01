@@ -49,13 +49,11 @@ dedupe_wide <- function(x, cols_dedupe, cols_expand = NULL, max_new_cols = NULL,
       x_2 <- x[!....idx %in% indexes_all_uniq]
       x <- x[....idx %in% indexes_all_uniq] # not necessary to work on all indexes
 
-      x_2_not_empty <- x_2[, .N] > 0L
-      if (x_2_not_empty) {
-        new_names_cols_dedupe <- paste0(cols_dedupe[1L], "....", seq_len(length(cols_dedupe)))
-        names(x_2)[names(x_2) %in% cols_dedupe] <- new_names_cols_dedupe
-        if (!(is.null(cols_expand) || is.na(cols_expand))) {
-          names(x_2)[names(x_2) %in% cols_expand] <- sapply(names(x_2)[names(x_2) %in% cols_expand], function(x) paste0(x, "....", seq_len(length(x))))
-        }
+      # even if x_2 is empty we need this to rbindlist later, because some columns from x can be missed after melt (e.g. when column contained only NA)
+      new_names_cols_dedupe <- paste0(cols_dedupe[1L], "....", seq_len(length(cols_dedupe)))
+      names(x_2)[names(x_2) %in% cols_dedupe] <- new_names_cols_dedupe
+      if (!is.null(cols_expand)) {
+        names(x_2)[names(x_2) %in% cols_expand] <- sapply(names(x_2)[names(x_2) %in% cols_expand], function(x) paste0(x, "....", seq_len(length(x))))
       }
 
       if (indexes_more_than_one_occurence[, .N] > 0L) {
@@ -77,14 +75,14 @@ dedupe_wide <- function(x, cols_dedupe, cols_expand = NULL, max_new_cols = NULL,
       x <- x[, .SD, .SDcols = names(x)[!names(x) %in% c(cols_dedupe, cols_expand)]]
       x <- expanded_columns[x, on = "....idx", nomatch = 0L]
 
-      if (x_2_not_empty) {
-        if (enable_drop) {
-          cols_to_drop <- x_2[, lapply(.SD, function(x) all(is.na(x))), .SDcols = new_names_cols_dedupe[new_names_cols_dedupe != paste0(cols_dedupe[1L], "....1")]]
-          cols_to_drop <- melt.data.table(cols_to_drop, measure.vars = names(cols_to_drop))
-          cols_to_drop <- cols_to_drop[value == TRUE]
-          x_2 <- x_2[, .SD, .SDcols = names(x_2)[!names(x_2) %in% cols_to_drop$variable]]
-        }
-        x <- rbindlist(list(x, x_2), fill = TRUE)
+      if (enable_drop) {
+        cols_to_drop <- x_2[, lapply(.SD, function(x) all(is.na(x))), .SDcols = new_names_cols_dedupe[new_names_cols_dedupe != paste0(cols_dedupe[1L], "....1")]]
+        cols_to_drop <- melt.data.table(cols_to_drop, measure.vars = names(cols_to_drop))
+        cols_to_drop <- cols_to_drop[value == TRUE]
+        x_2 <- x_2[, .SD, .SDcols = names(x_2)[!names(x_2) %in% cols_to_drop$variable]]
+      }
+      x <- rbindlist(list(x, x_2), fill = TRUE) # even if x_2 is empty, because in x some columns from cols_expand can be missed (e.g. if contained all NA)
+      if (x_2[, .N] > 0L) {
         x <- x[order(....idx)] # to preserve natural order of rows
       }
 
