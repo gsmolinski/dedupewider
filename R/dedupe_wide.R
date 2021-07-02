@@ -30,6 +30,7 @@ dedupe_wide <- function(x, cols_dedupe, cols_expand = NULL, max_new_cols = NULL,
   ....idx <- filter_col <- V1 <- main_index <- rest_indexes <- value <- NULL
   check_prerequisites(x, cols_dedupe, cols_expand, max_new_cols, enable_drop)
   class_x <- attr(x, "class")
+  pointer_x <- attr(x, ".internal.selfref")
   x <- copy(x)
   if (!is.data.table(x)) {
     setDT(x)
@@ -92,9 +93,15 @@ dedupe_wide <- function(x, cols_dedupe, cols_expand = NULL, max_new_cols = NULL,
 
     x[, ....idx := NULL]
     attr(x, "class") <- class_x
+    if (is.null(pointer_x)) {
+      attr(x, ".internal.selfref") <- NULL
+    }
     x
   } else {
     attr(x, "class") <- class_x
+    if (is.null(pointer_x)) {
+      attr(x, ".internal.selfref") <- NULL
+    }
     x
   }
 }

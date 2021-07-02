@@ -33,7 +33,7 @@ display_tbl <- function(x) {
 
 We can distinguish several types of deduplication when thinking about table - across one column we could use `duplicated()` (or `unique()`) to check (or remove) which records are duplicated; across one row we could iterate over rows and use the same `duplicated()` (or `unique()`) or gather multiple columns into one (by changing table from wide format to long) and then perform deduplication across one, long column.
 
-Finally, we can think of deduplication as a process of finding duplicated data across different columns *and* rows, enabling transitive relation:
+Finally, we can think of deduplication as a process of finding duplicated data across different columns *and* rows, using transitive relation:
 
 ```{r}
 example_table <- data.frame(Tel_1 = c(111, 222, 444, 555),
