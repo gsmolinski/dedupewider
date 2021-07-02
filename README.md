@@ -13,8 +13,8 @@ company) by sharing some telephone numbers. This package provides a
 function to find connected rows based on data on chosen columns and
 collapse it into one row.
 
-This function was used in CATI surveys (especially on businesses
-databases) to minimize the chance that interviewers will call
+Function from this package was used in CATI surveys (especially on
+businesses databases) to minimize the chance that interviewers will call
 independently the same respondent and thus irritate her or him. It is a
 chance that the same, suitable person to participate in the survey, work
 in more than one company and that these companies exist as a separate
@@ -28,13 +28,12 @@ chance for this inconvenience will be much lower.
 
 ## Installation
 
-<!--
-You can install the released version of dedupewider from [CRAN](https://CRAN.R-project.org) with:
+You can install the released version of dedupewider from
+[CRAN](https://CRAN.R-project.org) with:
 
 ``` r
 install.packages("dedupewider")
 ```
--->
 
 And the development version from [GitHub](https://github.com/) with:
 
@@ -45,6 +44,18 @@ devtools::install_github("gsmolinski/dedupewider")
 
 ## Usage
 
-<!--
-Please refer to vignette (includes examples and description of algorithm): *[Usage and algorithm explained]()*.
--->
+``` r
+library(dedupewider)
+
+initial_table <- data.frame(tel_1 = c(111, 222, 444, 555),
+                            tel_2 = c(222, 666, 666, 555),
+                            tel_3 = c(NA, NA, NA, 555),
+                            tel_4 = c(NA, NA, NA, 555),
+                            tel_5 = c(NA, NA, NA, 555),
+                            name = paste0("name", 1:4),
+                            nace = c("01.19", "01.64", "55.90", "09.10"))
+
+table_deduplicated <- dedupe_wide(initial_table, cols_dedupe = paste0("tel_", 1:5),
+                                  cols_expand = "name")
+table_deduplicated
+```
