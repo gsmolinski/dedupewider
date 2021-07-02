@@ -1,4 +1,4 @@
-#' Dedupe across multiple columns using transitive relation
+#' Dedupe across multiple columns
 #'
 #' Collapse many rows connected by duplicated data (which can exists in different
 #' rows and columns) to one, based on data in chosen columns, optionally putting
