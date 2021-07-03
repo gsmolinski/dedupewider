@@ -21,7 +21,7 @@ test_that("errors", {
                "Argument passed to max_new_cols must be of length 1, of type numeric and cannot be NA.")
 })
 
-test_that("no changes in df", {
+test_that("no changes in df when empty or NA or no duplicates", {
   x <- x[, c(1, 6, 7)]
   x$tel_2 <- 1:4
   cols_dedupe <- c("tel_1", "tel_2")
@@ -30,4 +30,12 @@ test_that("no changes in df", {
   expect_equal(dedupe_wide(x, cols_dedupe), x)
   x <- x[FALSE, ]
   expect_equal(dedupe_wide(x, cols_dedupe), x)
+})
+
+test_that("rows with NA are not duplicated", {
+  x <- data.frame(tel_1 = c(777, 888, NA, NA),
+                  tel_2 = c(888, 777, NA, NA),
+                  name = paste0("name", 5:8))
+  cols_dedupe <- paste0("tel_", 1:2)
+  expect_equal(nrow(dedupe_wide(x, cols_dedupe)), 3)
 })

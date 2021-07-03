@@ -24,18 +24,18 @@
 #'dedupe_wide(x,
 #'            cols_dedupe = c("tel_1", "tel_2"),
 #'            cols_expand = "name")
-#' # first three collapsed to one, for name4 keeped only one phone number (555)
+#' # first three collapsed into one, for name4 keeped only one phone number (555)
 #' # 'name1', 'name2', 'name3' keeped in new columns
 #'
-#' y <- data.frame(tel_1 = c(111, 222, NA, NA),
-#'                 tel_2 = c(222, 111, NA, NA),
+#' y <- data.frame(tel_1 = c(777, 888, NA, NA),
+#'                 tel_2 = c(888, 777, NA, NA),
 #'                 name = paste0("name", 5:8))
 #' # rows 3 and 4 has only missing data
 #'
 #' dedupe_wide(y,
 #'            cols_dedupe = c("tel_1", "tel_2"),
 #'            cols_expand = "name")
-#' # first two rows collapsed two one, nothing change for the rest of rows
+#' # first two rows collapsed into one, nothing change for the rest of rows
 dedupe_wide <- function(x, cols_dedupe, cols_expand = NULL, max_new_cols = NULL, enable_drop = TRUE) {
   ....idx <- filter_col <- V1 <- main_index <- rest_indexes <- value <- NULL
   check_prerequisites(x, cols_dedupe, cols_expand, max_new_cols, enable_drop)
@@ -56,7 +56,7 @@ dedupe_wide <- function(x, cols_dedupe, cols_expand = NULL, max_new_cols = NULL,
 
     if (!is.null(indexes)) {
       indexes_more_than_one_occurence <- indexes[filter_col > 1L][, filter_col := NULL]
-      indexes_all_uniq <- indexes[, list(indexes = unique(sort(unlist(V1, use.names = FALSE))))][["indexes"]]
+      indexes_all_uniq <- indexes[, list(indexes = unique(fsort(unlist(V1, use.names = FALSE))))][["indexes"]]
       x_2 <- x[!....idx %in% indexes_all_uniq]
       x <- x[....idx %in% indexes_all_uniq] # not necessary to work on all indexes
 
@@ -68,7 +68,7 @@ dedupe_wide <- function(x, cols_dedupe, cols_expand = NULL, max_new_cols = NULL,
       }
 
       if (indexes_more_than_one_occurence[, .N] > 0L) {
-        indexes_more_than_one_occurence_vector <- indexes_more_than_one_occurence[, list(indexes = unique(sort(unlist(V1, use.names = FALSE), decreasing = TRUE)))][["indexes"]] # exclude indexes where main and rest are the same, decreasing order - important!
+        indexes_more_than_one_occurence_vector <- indexes_more_than_one_occurence[, list(indexes = unique(fsort(unlist(V1, use.names = FALSE), decreasing = TRUE)))][["indexes"]] # exclude indexes where main and rest are the same, decreasing order - important!
 
         indexes_more_than_one_occurence[, V1 := lapply(V1, function(x) x[-which.min(x)])] # min number will be key
         indexes_more_than_one_occurence <- indexes_more_than_one_occurence[, list(rest_indexes = unlist(V1, use.names = FALSE)), by = main_index]
