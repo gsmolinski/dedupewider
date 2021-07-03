@@ -56,7 +56,7 @@ dedupe_wide <- function(x, cols_dedupe, cols_expand = NULL, max_new_cols = NULL,
 
     if (!is.null(indexes)) {
       indexes_more_than_one_occurence <- indexes[filter_col > 1L][, filter_col := NULL]
-      indexes_all_uniq <- indexes[, list(indexes = unique(fsort(unlist(V1, use.names = FALSE))))][["indexes"]]
+      indexes_all_uniq <- indexes[, list(indexes = unique(sort(unlist(V1, use.names = FALSE))))][["indexes"]]
       x_2 <- x[!....idx %in% indexes_all_uniq]
       x <- x[....idx %in% indexes_all_uniq] # not necessary to work on all indexes
 
@@ -68,7 +68,7 @@ dedupe_wide <- function(x, cols_dedupe, cols_expand = NULL, max_new_cols = NULL,
       }
 
       if (indexes_more_than_one_occurence[, .N] > 0L) {
-        indexes_more_than_one_occurence_vector <- indexes_more_than_one_occurence[, list(indexes = unique(fsort(unlist(V1, use.names = FALSE), decreasing = TRUE)))][["indexes"]] # exclude indexes where main and rest are the same, decreasing order - important!
+        indexes_more_than_one_occurence_vector <- indexes_more_than_one_occurence[, list(indexes = unique(sort(unlist(V1, use.names = FALSE), decreasing = TRUE)))][["indexes"]] # exclude indexes where main and rest are the same, decreasing order - important!
 
         indexes_more_than_one_occurence[, V1 := lapply(V1, function(x) x[-which.min(x)])] # min number will be key
         indexes_more_than_one_occurence <- indexes_more_than_one_occurence[, list(rest_indexes = unlist(V1, use.names = FALSE)), by = main_index]
