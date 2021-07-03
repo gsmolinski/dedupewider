@@ -31,6 +31,9 @@ Collapse many rows connected by duplicated data (which can exists in different
 rows and columns) to one, based on data in chosen columns, optionally putting
 non-consistent data into newly created additional columns.
 }
+\details{
+Althought \code{\link[base]{duplicated}} or \code{\link[base]{unique}} treats missing data (NA) as duplicated data, this function do not do this (see second example below).
+}
 \note{
 Internally, function is mainly based on \code{\link[=data.table]{data.table}} functions and thus enabling parallel computation
 is possible. To do this, just call \code{\link[data.table]{setDTthreads}} before calling \code{dedupe_wide} function.
@@ -38,7 +41,7 @@ is possible. To do this, just call \code{\link[data.table]{setDTthreads}} before
 \examples{
 x <- data.frame(tel_1 = c(111, 222, 444, 555),
                 tel_2 = c(222, 666, 666, 555),
-                name = c("name1", "name2", "name3", "name4"))
+                name = paste0("name", 1:4))
 # rows 1, 2, 3 share the same phone numbers
 
 dedupe_wide(x,
@@ -46,4 +49,14 @@ dedupe_wide(x,
            cols_expand = "name")
 # first three collapsed to one, for name4 keeped only one phone number (555)
 # 'name1', 'name2', 'name3' keeped in new columns
+
+y <- data.frame(tel_1 = c(111, 222, NA, NA),
+                tel_2 = c(222, 111, NA, NA),
+                name = paste0("name", 5:8))
+# rows 3 and 4 has only missing data
+
+dedupe_wide(y,
+           cols_dedupe = c("tel_1", "tel_2"),
+           cols_expand = "name")
+# first two rows collapsed two one, nothing change for the rest of rows
 }

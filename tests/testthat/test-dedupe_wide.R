@@ -9,16 +9,15 @@ cols_dedupe <- paste0("tel_", 1:5)
 
 
 test_that("errors", {
-  expect_error(dedupe_wide(x, c(cols_dedupe, NA), cols_expand, max_new_cols, enable_drop),
+  expect_error(dedupe_wide(x, c(cols_dedupe, NA)),
                "Argument passed to cols_dedupe cannot be NULL or contains NA.")
-  expect_error(dedupe_wide(x, cols_dedupe, c(cols_expand, NA), max_new_cols, enable_drop),
+  expect_error(dedupe_wide(x, cols_dedupe, cols_expand = NA),
                "Argument passed to cols_expand cannot contains NA.")
   enable_drop <- c(1, 2, 3)
-  expect_error(dedupe_wide(x, cols_dedupe, cols_expand, max_new_cols, enable_drop),
+  expect_error(dedupe_wide(x, cols_dedupe, enable_drop = enable_drop),
                "Argument passed to enable_drop must be of length 1, of type logical and cannot be NA.")
-  enable_drop <- TRUE
   max_new_cols <- NA
-  expect_error(dedupe_wide(x, cols_dedupe, cols_expand, max_new_cols, enable_drop),
+  expect_error(dedupe_wide(x, cols_dedupe, max_new_cols = max_new_cols),
                "Argument passed to max_new_cols must be of length 1, of type numeric and cannot be NA.")
 })
 

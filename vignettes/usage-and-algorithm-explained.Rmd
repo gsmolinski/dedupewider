@@ -45,7 +45,7 @@ display_tbl(example_table)
 
 In the example above, we could treat records in rows 1, 2 and 3 as the same record. Why? Because row 1 and 2 has one the same phone number (222), row 2 and 3 has one the same phone number (666) and, because row 1 is duplicated with row 2, row 2 is duplicated with row 3, then row 1 is duplicated with row 3. User can see the result of this specific deduplication by calling (after installation of package):
 
-    example("dedupe_wide", "dedupewider")
+    example("dedupe_wide", "dedupewider") # look at the first example
 
 This method was used in CATI surveys (especially on businesses databases) to minimize the chance that interviewers will call independently the same respondent and thus irritate her or him. It is a chance that the same, suitable person to participate in the survey, work in more than one company and that these companies exist as a separate records in the database (sometimes just as a separate companies, sometimes as a branches). When trying to find participant in company X, interviewer can be switched to company C to speak with employee E and the second interviewer, when calling company Y, can also be switched to company C to speak with employee E. If some data in database (like phone numbers) can be use to collapse companies X, Y and C to one record, the chance for this inconvenience will be much lower.
 
@@ -118,6 +118,29 @@ table_deduplicated
 
 ```{r usage-max-new-cols-display}
 display_tbl(table_deduplicated)
+```
+
+Functions `duplicated()` or `unique()` can treat missing data as duplicated data, e.g.
+
+```{r duplicated-unique-na, echo=TRUE, results='hide'}
+duplicated(c(NA, NA)) # returns FALSE TRUE
+unique(c(NA, NA)) # returns NA (vector of length 1)
+```
+
+But `dedupe_wide` cannot treat missing data as duplicated data, e.g. in case of this table:
+
+```{r dedupe_wide-na-initial-table}
+table_na <- data.frame(tel_1 = c(111, 222, NA, NA),
+                tel_2 = c(222, 111, NA, NA),
+                name = paste0("name", 5:8))
+display_tbl(table_na)
+```
+
+Rows 1 and 2 will be collapsed to one, but the rest of rows remain unchanged:
+
+```{r dedupe_wide-na}
+table_na_dedupe <- dedupe_wide(table_na, cols_dedupe = c("tel_1", "tel_2"), cols_expand = "name")
+display_tbl(table_na_dedupe)
 ```
 
 It is also important to note that this function was implemented using `data.table` and thus parallel computing is possible. To enable this, user can just call `data.table::setDTthreads()` before using `dedupe_wide()`:

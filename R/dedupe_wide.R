@@ -9,7 +9,7 @@
 #' @param cols_expand A character vector of columns' names in \code{x} or \code{NULL} (means: none except those used to dedupe) indicating columns with data to keep in case of non-consistent data, i.e. unique data from these columns will be saved into new columns, number of which is control by \code{max_new_cols}.
 #' @param max_new_cols A numeric vector length 1 or \code{NULL} (means: without limit) indicating how many new columns can be created to store data from columns used to dedupe. Cannot be lower than 1.
 #' @param enable_drop A logical vector length 1: should given column be dropped if (after deduplication) contains only missing data (\code{NA})? Applicable only to columns used to dedupe.
-#'
+#' @details Althought \code{\link[base]{duplicated}} or \code{\link[base]{unique}} treats missing data (NA) as duplicated data, this function do not do this (see second example below).
 #' @return If duplicated data found - data.frame with changed columns' names and optionally additional columns (in some cases less columns). Otherwise data.frame without changes.
 #' @export
 #' @import data.table
@@ -18,7 +18,7 @@
 #' @examples
 #' x <- data.frame(tel_1 = c(111, 222, 444, 555),
 #'                 tel_2 = c(222, 666, 666, 555),
-#'                 name = c("name1", "name2", "name3", "name4"))
+#'                 name = paste0("name", 1:4))
 #'# rows 1, 2, 3 share the same phone numbers
 #'
 #'dedupe_wide(x,
@@ -26,6 +26,16 @@
 #'            cols_expand = "name")
 #' # first three collapsed to one, for name4 keeped only one phone number (555)
 #' # 'name1', 'name2', 'name3' keeped in new columns
+#'
+#' y <- data.frame(tel_1 = c(111, 222, NA, NA),
+#'                 tel_2 = c(222, 111, NA, NA),
+#'                 name = paste0("name", 5:8))
+#' # rows 3 and 4 has only missing data
+#'
+#' dedupe_wide(y,
+#'            cols_dedupe = c("tel_1", "tel_2"),
+#'            cols_expand = "name")
+#' # first two rows collapsed two one, nothing change for the rest of rows
 dedupe_wide <- function(x, cols_dedupe, cols_expand = NULL, max_new_cols = NULL, enable_drop = TRUE) {
   ....idx <- filter_col <- V1 <- main_index <- rest_indexes <- value <- NULL
   check_prerequisites(x, cols_dedupe, cols_expand, max_new_cols, enable_drop)
