@@ -47,7 +47,7 @@ In the example above, we could treat records in rows 1, 2 and 3 as the same reco
 
     example("dedupe_wide", "dedupewider") # look at the first example
 
-This method was used in CATI surveys (especially on businesses databases) to minimize the chance that interviewers will call independently the same respondent and thus irritate her or him. It is a chance that the same, suitable person to participate in the survey, work in more than one company and that these companies exist as a separate records in the database (sometimes just as a separate companies, sometimes as a branches). When trying to find participant in company X, interviewer can be switched to company C to speak with employee E and the second interviewer, when calling company Y, can also be switched to company C to speak with employee E. If some data in database (like phone numbers) can be use to collapse companies X, Y and C to one record, the chance for this inconvenience will be much lower.
+This method was used in CATI surveys (especially on businesses databases) to minimize the chance that interviewers will call independently the same respondent and thus irritate her or him. It is a chance that the same, suitable person to participate in the survey, work in more than one company and that these companies exist as a separate records in the database (sometimes just as a separate companies, sometimes as a branches). When trying to find participant in company X, interviewer can be switched to company C to speak with employee E and the second interviewer, when calling company Y, can also be switched to company C to speak with employee E. If some data in database (like phone numbers) can be use to collapse companies X, Y and C into one record, the chance for this inconvenience will be much lower.
 
 ## Usage
 
@@ -64,7 +64,7 @@ initial_table <- data.frame(tel_1 = c(111, 222, 444, 555),
 display_tbl(initial_table)
 ```
 
-We already know that rows 1, 2, 3 will be collapsed to one. Let's see the default behaviour of function:
+We already know that rows 1, 2, 3 will be collapsed into one. Let's see the default behaviour of function:
 
 ```{r usage-default, echo=TRUE, results='hide'}
 library(dedupewider)
@@ -92,7 +92,7 @@ We can see that:
 - deduplication was performed also on the same row, so for company "name4" only one phone number was left
 - all unique information from column "name" was keeped and these columns were renamed
 - for the rest columns ("nace") just one code was keeped - it is always the data from the row which is closest to the beginning of the table
-- order of rows and columns was keeped
+- order of rows and columns was keeped, **however, it is important to note that for `cols_dedupe` first element of names passed to it will be used as a base for new names of columns and to determine the place for these columns**
 
 Of course, columns passed to `cols_expand` are treat as separate columns, so data is not mixed:
 
