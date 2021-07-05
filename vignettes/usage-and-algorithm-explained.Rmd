@@ -156,7 +156,7 @@ dedupe_wide(initial_table, cols_dedupe = paste0("tel_", 1:5),
 The aim of this section is to show algorithm used to find duplicated records - this can be use for cross-checking or can be a inspiration to implement more efficient solution if needed. Table below will be our starting point:
 
 ```{r initial-table-algorithm}
-initial_table <- data.frame(tel_1 = c(111, 222, 333, 444, 333, 555,
+initial_table <- data.frame(tel_1 = c(111, 222, 333, 444, 333, 333,
                                       666, 777, 333, 333, 333, 333),
                             tel_2 = c(777, 666, NA, 666, NA, NA, NA, NA, NA, 777,
                                       888, 777),
@@ -174,7 +174,7 @@ We can split the algorithm into two main steps - finding duplicates and cascade 
 At first, we need to gather all columns which will be used for deduplication into one column, but keeping indexes to know which records belong to the same row (below only first 6 rows are shown):
 
 ```{r gather-cols}
-x <- data.frame(tel_1 = c(111, 222, 333, 444, 333, 555,
+x <- data.frame(tel_1 = c(111, 222, 333, 444, 333, 333,
                                       666, 777, 333, 333, 333, 333),
                             tel_2 = c(777, 666, NA, 666, NA, NA, NA, NA, NA, 777,
                                       888, 777),

@@ -24,15 +24,15 @@ dedupe_wide(
 \item{enable_drop}{A logical vector length 1: should given column be dropped if (after deduplication) contains only missing data (\code{NA})? Applicable only to columns used to dedupe.}
 }
 \value{
-If duplicated data found - data.frame with changed columns' names and optionally additional columns (in some cases less columns). Otherwise data.frame without changes.
+If duplicated data found - data.frame with changed columns' names and optionally additional columns (in some cases less columns, depends on \code{enable_drop} argument). Otherwise data.frame without changes.
 }
 \description{
-Collapse many rows connected by duplicated data (which can exists in different
+Collapse many rows connected by duplicated data (which can exist in different
 rows and columns) to one, based on data in chosen columns, optionally putting
 non-consistent data into newly created additional columns.
 }
 \details{
-Althought \code{\link[base]{duplicated}} or \code{\link[base]{unique}} treats missing data (NA) as duplicated data, this function do not do this (see second example below).
+Althought \code{\link[base]{duplicated}} or \code{\link[base]{unique}} treats missing data (\code{NA}) as duplicated data, this function do not do this (see second example below).
 }
 \note{
 Internally, function is mainly based on \code{\link[=data.table]{data.table}} functions and thus enabling parallel computation
@@ -47,16 +47,16 @@ x <- data.frame(tel_1 = c(111, 222, 444, 555),
 dedupe_wide(x,
            cols_dedupe = c("tel_1", "tel_2"),
            cols_expand = "name")
-# first three collapsed to one, for name4 keeped only one phone number (555)
+# first three collapsed into one, for name4 keeped only one phone number (555)
 # 'name1', 'name2', 'name3' keeped in new columns
 
-y <- data.frame(tel_1 = c(111, 222, NA, NA),
-                tel_2 = c(222, 111, NA, NA),
+y <- data.frame(tel_1 = c(777, 888, NA, NA),
+                tel_2 = c(888, 777, NA, NA),
                 name = paste0("name", 5:8))
 # rows 3 and 4 has only missing data
 
 dedupe_wide(y,
            cols_dedupe = c("tel_1", "tel_2"),
            cols_expand = "name")
-# first two rows collapsed two one, nothing change for the rest of rows
+# first two rows collapsed into one, nothing change for the rest of rows
 }

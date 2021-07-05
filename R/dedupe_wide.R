@@ -1,6 +1,6 @@
 #' Dedupe across multiple columns
 #'
-#' Collapse many rows connected by duplicated data (which can exists in different
+#' Collapse many rows connected by duplicated data (which can exist in different
 #' rows and columns) to one, based on data in chosen columns, optionally putting
 #' non-consistent data into newly created additional columns.
 #'
@@ -122,12 +122,12 @@ check_prerequisites <- function(x, cols_dedupe, cols_expand, max_new_cols, enabl
   } else if (anyNA(cols_dedupe) || is.null(cols_dedupe)) {
     stop(paste0("Argument passed to cols_dedupe cannot be NULL or contains NA."))
   } else if (length(cols_dedupe) < 2) {
-    stop("Vector passed as argment to cols_dedupe must be of length 2 or more.")
+    stop("Vector passed as argument to cols_dedupe must be of length 2 or more.")
+  } else if (anyNA(cols_expand)) {
+    stop("Argument passed to cols_expand cannot contains NA.")
   } else if (!all(cols_dedupe %in% names(x))) {
     stop(paste0("All columns passed as argument to cols_dedupe must exists as names of columns in x, now '"),
          paste0(cols_dedupe[!cols_dedupe %in% names(x)], collapse = ", "), "' are not present in x.")
-  } else if (anyNA(cols_expand)) {
-    stop("Argument passed to cols_expand cannot contains NA.")
   } else if (!all(cols_expand %in% names(x))) {
     stop(paste0("All columns passed as argument to cols_expand must exists as names of columns in x, now '"),
          paste0(cols_expand[!cols_expand %in% names(x)], collapse = ", "), "' are not present in x.")
@@ -141,6 +141,8 @@ check_prerequisites <- function(x, cols_dedupe, cols_expand, max_new_cols, enabl
     stop("Argument passed to max_new_cols cannot be lower than 1.")
   } else if (!is.logical(enable_drop) || is.na(enable_drop) || length(enable_drop) > 1) {
     stop("Argument passed to enable_drop must be of length 1, of type logical and cannot be NA.")
+  } else if (any(cols_dedupe %in% cols_expand)) {
+    stop("Names passed to cols_dedupe cannot be passed to cols_expand.")
   }
 }
 

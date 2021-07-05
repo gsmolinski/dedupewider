@@ -1,21 +1,19 @@
 Package: dedupewider
 Title: Deduplication Across Multiple Columns
-Version: 0.0.0.9000
+Version: 0.0.1.9000
 Authors@R: 
     person("Grzegorz",
            "Smoliński",
            role = c("aut", "cre"),
            email = "g.smolinski1@gmail.com")
-Description: Duplicated data can exists in different rows and columns and user may need to
+Description: Duplicated data can exist in different rows and columns and user may need to
     treat observations (rows) connected by duplicated data as one observation,
     e.g. companies can belong to one family (and thus: be one company) by sharing
     some telephone numbers. This package provides a function to find connected rows
     based on data on chosen columns and collapse it into one row.
 License: MIT + file LICENSE
-Encoding: UTF-8
-LazyData: true
-Roxygen: list(markdown = TRUE)
-RoxygenNote: 7.1.1
+URL: https://github.com/gsmolinski/dedupewider
+BugReports: https://github.com/gsmolinski/dedupewider/issues
 Depends: R (>= 3.1.0)
 Imports: data.table (>= 1.12.4)
 Suggests: 
@@ -26,5 +24,7 @@ Suggests:
     testthat (>= 3.0.0)
 Config/testthat/edition: 3
 VignetteBuilder: knitr
-URL: https://github.com/gsmolinski/dedupewider
-BugReports: https://github.com/gsmolinski/dedupewider/issues
+Encoding: UTF-8
+LazyData: true
+Roxygen: list(markdown = TRUE)
+RoxygenNote: 7.1.1
