@@ -32,6 +32,8 @@ rows and columns) to one, based on data in chosen columns, optionally putting
 non-consistent data into newly created additional columns.
 }
 \details{
+Columns passed to \code{cols_dedupe} must be atomic.
+
 Althought \code{\link[base]{duplicated}} or \code{\link[base]{unique}} treats missing data (\code{NA}) as duplicated data, this function do not do this (see second example below).
 }
 \note{

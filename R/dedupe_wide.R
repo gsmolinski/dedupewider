@@ -9,7 +9,9 @@
 #' @param cols_expand A character vector of columns' names in \code{x} or \code{NULL} (means: none except those used to dedupe) indicating columns with data to keep in case of non-consistent data, i.e. unique data from these columns will be saved into new columns, number of which is control by \code{max_new_cols}.
 #' @param max_new_cols A numeric vector length 1 or \code{NULL} (means: without limit) indicating how many new columns can be created to store data from columns used to dedupe. Cannot be lower than 1.
 #' @param enable_drop A logical vector length 1: should given column be dropped if (after deduplication) contains only missing data (\code{NA})? Applicable only to columns used to dedupe.
-#' @details Althought \code{\link[base]{duplicated}} or \code{\link[base]{unique}} treats missing data (\code{NA}) as duplicated data, this function do not do this (see second example below).
+#' @details Columns passed to \code{cols_dedupe} must be atomic.
+#'
+#' Althought \code{\link[base]{duplicated}} or \code{\link[base]{unique}} treats missing data (\code{NA}) as duplicated data, this function do not do this (see second example below).
 #' @return If duplicated data found - data.frame with changed columns' names and optionally additional columns (in some cases less columns, depends on \code{enable_drop} argument). Otherwise data.frame without changes.
 #' @export
 #' @import data.table
@@ -143,6 +145,8 @@ check_prerequisites <- function(x, cols_dedupe, cols_expand, max_new_cols, enabl
     stop("Argument passed to enable_drop must be of length 1, of type logical and cannot be NA.")
   } else if (any(cols_dedupe %in% cols_expand)) {
     stop("Names passed to cols_dedupe cannot be passed to cols_expand.")
+  } else if (!all(sapply(x, is.atomic))) {
+    stop("All columns passed to cols_dedupe must be atomic.")
   }
 }
 
