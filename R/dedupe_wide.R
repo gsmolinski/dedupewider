@@ -50,6 +50,10 @@ dedupe_wide <- function(x, cols_dedupe, cols_expand = NULL, max_new_cols = NULL,
 
   if (x[, .N] > 0L) {
 
+    if (!all(x[, list(atomic = unlist(lapply(.SD, is.atomic), use.names = FALSE)), .SDcols = cols_dedupe][["atomic"]])) {
+      stop("All columns passed to cols_dedupe must be atomic.")
+    }
+
     x[, ....idx := .I]
     cols_original <- names(x)
     setkey(x, "....idx")
@@ -145,8 +149,6 @@ check_prerequisites <- function(x, cols_dedupe, cols_expand, max_new_cols, enabl
     stop("Argument passed to enable_drop must be of length 1, of type logical and cannot be NA.")
   } else if (any(cols_dedupe %in% cols_expand)) {
     stop("Names passed to cols_dedupe cannot be passed to cols_expand.")
-  } else if (!all(sapply(x, is.atomic))) {
-    stop("All columns passed to cols_dedupe must be atomic.")
   }
 }
 

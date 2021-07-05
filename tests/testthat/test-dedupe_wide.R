@@ -19,6 +19,9 @@ test_that("errors", {
   max_new_cols <- NA
   expect_error(dedupe_wide(x, cols_dedupe, max_new_cols = max_new_cols),
                "Argument passed to max_new_cols must be of length 1, of type numeric and cannot be NA.")
+  x <- data.table::data.table(tel_1 = list(c(111, 222), 222, 444, 555),
+                              tel_2 = c(222, 666, 666, 555))
+  expect_error(dedupe_wide(x, paste0("tel_", 1:2)), "All columns passed to cols_dedupe must be atomic.")
 })
 
 test_that("no changes in df when empty or NA or no duplicates", {
