@@ -26,8 +26,8 @@ sometimes as a branches). When trying to find participant in company X,
 interviewer can be switched to company C to speak with employee E and
 the second interviewer, when calling company Y, can also be switched to
 company C to speak with employee E. If some data in database (like phone
-numbers) can be use to collapse companies X, Y and C to one record, the
-chance for this inconvenience will be much lower.
+numbers) can be use to collapse companies X, Y and C into one record,
+the chance for this inconvenience will be much lower.
 
 ## Installation
 
