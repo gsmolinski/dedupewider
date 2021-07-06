@@ -4,6 +4,9 @@
 # dedupewider
 
 <!-- badges: start -->
+
+[![CRAN
+status](https://www.r-pkg.org/badges/version/dedupewider)](https://CRAN.R-project.org/package=dedupewider)
 <!-- badges: end -->
 
 Duplicated data can exists in different rows and columns and user may
