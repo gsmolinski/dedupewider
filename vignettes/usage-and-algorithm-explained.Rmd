@@ -64,7 +64,7 @@ initial_table <- data.frame(tel_1 = c(111, 222, 444, 555),
 display_tbl(initial_table)
 ```
 
-We already know that rows 1, 2, 3 will be collapsed into one. Let's see the default behaviour of function:
+We already know that rows 1, 2, 3 will be collapsed into one. Let's see the default behavior of function:
 
 ```{r usage-default, echo=TRUE, results='hide'}
 library(dedupewider)
@@ -90,9 +90,9 @@ We can see that:
 
 - columns used to dedupe are not just renamed, but also the number of columns is lower than initially. That's because argument `enable_drop` was set (be default) to `TRUE` - fifth column would contain only missing data (NA), so was removed
 - deduplication was performed also on the same row, so for company "name4" only one phone number was left
-- all unique information from column "name" was keeped and these columns were renamed
-- for the rest columns ("nace") just one code was keeped - it is always the data from the row which is closest to the beginning of the table
-- order of rows and columns was keeped, **however, it is important to note that for `cols_dedupe` first element of names passed to it will be used as a base for new names of columns and to determine the place for these columns**
+- all unique information from column "name" was preserved and these columns were renamed
+- for the rest columns ("nace") just one code was preserved - it is always the data from the row which is closest to the beginning of the table
+- order of rows and columns was preserved, **however, it is important to note that for `cols_dedupe` first element of names passed to it will be used as a base for new names of columns and to determine the place for these columns**
 
 Of course, columns passed to `cols_expand` are treat as separate columns, so data is not mixed:
 
@@ -190,7 +190,7 @@ x_tmp[, variable := NULL]
 display_tbl(head(x_tmp))
 ```
 
-Now we can group by *value* and summarise indexes (column V1):
+Now we can group by *value* and summarize indexes (column V1):
 
 ```{r group-by-value}
 x_tmp[, V1 := list(list(....idx)), by = "value"][, ....idx := NULL]
@@ -203,7 +203,7 @@ x_tmp[, V1 := lapply(V1, unique)][, `:=`(main_index = unlist(lapply(V1, min), us
 display_tbl(x_tmp[, c("V1", "main_index")])
 ```
 
-We want also to have a main index which will be used as a replace. It will be the lowest index, so later we can easily keep orginal order of rows.
+We want also to have a main index which will be used as a replace. It will be the lowest index, so later we can easily keep original order of rows.
 
 We can see that now not all indexes are connected as they should, e.g. index 7 is not connected with index 3, but should (because 7 and 3 are connected with 4).
 
@@ -212,13 +212,13 @@ We can see that now not all indexes are connected as they should, e.g. index 7 i
 To fix this, we will - step by step, for each index - replace rest indexes by main index. At first, let's make a pairs: main index - one of the rests indexes:
 
 ```{r make-pairs-indexes}
-indexes_more_than_one_occurence <- x_tmp
-indexes_more_than_one_occurence_vector <- indexes_more_than_one_occurence[, list(indexes = unique(sort(unlist(V1, use.names = FALSE), decreasing = TRUE)))][["indexes"]]
-indexes_more_than_one_occurence[, V1 := lapply(V1, function(x) x[-which.min(x)])]
-indexes_more_than_one_occurence <- indexes_more_than_one_occurence[, list(rest_indexes = unlist(V1, use.names = FALSE)), by = main_index]
-setorder(indexes_more_than_one_occurence, -rest_indexes, -main_index)
-indexes_more_than_one_occurence <- unique(indexes_more_than_one_occurence)
-display_tbl(indexes_more_than_one_occurence)
+indexes_more_than_one_occurrence <- x_tmp
+indexes_more_than_one_occurrence_vector <- indexes_more_than_one_occurrence[, list(indexes = unique(sort(unlist(V1, use.names = FALSE), decreasing = TRUE)))][["indexes"]]
+indexes_more_than_one_occurrence[, V1 := lapply(V1, function(x) x[-which.min(x)])]
+indexes_more_than_one_occurrence <- indexes_more_than_one_occurrence[, list(rest_indexes = unlist(V1, use.names = FALSE)), by = main_index]
+setorder(indexes_more_than_one_occurrence, -rest_indexes, -main_index)
+indexes_more_than_one_occurrence <- unique(indexes_more_than_one_occurrence)
+display_tbl(indexes_more_than_one_occurrence)
 ```
 
 We have also sorted them by descending order, at first by rest_indexes, then by main_index and removed duplicated pairs.
@@ -230,25 +230,25 @@ display_tbl(data.frame(main_index = c(10, 3, 1),
                        rest_indexes = c(12, 10, 3)))
 ```
 
-After iterate over each index (each iterate needs to end by reorder the table - again we need to sort them by descending order, at first by rest_indexes, then by main_index), removing duplicated: pairs and more than one occurence of rest_indexes, we will get:
+After iterate over each index (each iterate needs to end by reorder the table - again we need to sort them by descending order, at first by rest_indexes, then by main_index), removing duplicated: pairs and more than one occurrence of rest_indexes, we will get:
 
 ```{r}
-cascade_indexes <- function(indexes_more_than_one_occurence_vector, indexes_more_than_one_occurence) {
+cascade_indexes <- function(indexes_more_than_one_occurrence_vector, indexes_more_than_one_occurrence) {
   rest_indexes <- main_index <- filter <- NULL
-  for (i in indexes_more_than_one_occurence_vector) {
-    which <- which(indexes_more_than_one_occurence[["rest_indexes"]] == i)
-    value <- shift(indexes_more_than_one_occurence[which][["main_index"]], fill = i)
-    set(indexes_more_than_one_occurence, which, "rest_indexes", value)
-    setorder(indexes_more_than_one_occurence, -rest_indexes, -main_index)
+  for (i in indexes_more_than_one_occurrence_vector) {
+    which <- which(indexes_more_than_one_occurrence[["rest_indexes"]] == i)
+    value <- shift(indexes_more_than_one_occurrence[which][["main_index"]], fill = i)
+    set(indexes_more_than_one_occurrence, which, "rest_indexes", value)
+    setorder(indexes_more_than_one_occurrence, -rest_indexes, -main_index)
   }
-  indexes_more_than_one_occurence[, filter := fifelse(main_index == rest_indexes, FALSE, TRUE)]
-  indexes_more_than_one_occurence <- indexes_more_than_one_occurence[filter == TRUE][, filter := NULL]
-  indexes_more_than_one_occurence <- unique(indexes_more_than_one_occurence, by = "rest_indexes")
-  indexes_more_than_one_occurence
+  indexes_more_than_one_occurrence[, filter := fifelse(main_index == rest_indexes, FALSE, TRUE)]
+  indexes_more_than_one_occurrence <- indexes_more_than_one_occurrence[filter == TRUE][, filter := NULL]
+  indexes_more_than_one_occurrence <- unique(indexes_more_than_one_occurrence, by = "rest_indexes")
+  indexes_more_than_one_occurrence
 }
 
-indexes_more_than_one_occurence <- cascade_indexes(indexes_more_than_one_occurence_vector, indexes_more_than_one_occurence)
-display_tbl(indexes_more_than_one_occurence)
+indexes_more_than_one_occurrence <- cascade_indexes(indexes_more_than_one_occurrence_vector, indexes_more_than_one_occurrence)
+display_tbl(indexes_more_than_one_occurrence)
 ```
 
 The last thing to do is just to replace each rest_index by main_index in our main table (table passed to `dedupe_wide`), starting from the top of our pairs.

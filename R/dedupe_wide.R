@@ -11,7 +11,7 @@
 #' @param enable_drop A logical vector length 1: should given column be dropped if (after deduplication) contains only missing data (\code{NA})? Applicable only to columns used to dedupe.
 #' @details Columns passed to \code{cols_dedupe} must be atomic.
 #'
-#' Althought \code{\link[base]{duplicated}} or \code{\link[base]{unique}} treats missing data (\code{NA}) as duplicated data, this function do not do this (see second example below).
+#' Although \code{\link[base]{duplicated}} or \code{\link[base]{unique}} treats missing data (\code{NA}) as duplicated data, this function do not do this (see second example below).
 #' @return If duplicated data found - data.frame with changed columns' names and optionally additional columns (in some cases less columns, depends on \code{enable_drop} argument). Otherwise data.frame without changes.
 #' @export
 #' @import data.table
@@ -61,7 +61,7 @@ dedupe_wide <- function(x, cols_dedupe, cols_expand = NULL, max_new_cols = NULL,
     indexes <- find_duplicated_indexes(x, cols_dedupe)
 
     if (!is.null(indexes)) {
-      indexes_more_than_one_occurence <- indexes[filter_col > 1L][, filter_col := NULL]
+      indexes_more_than_one_occurrence <- indexes[filter_col > 1L][, filter_col := NULL]
       indexes_all_uniq <- indexes[, list(indexes = unique(sort(unlist(V1, use.names = FALSE))))][["indexes"]]
       x_2 <- x[!....idx %in% indexes_all_uniq]
       x <- x[....idx %in% indexes_all_uniq] # not necessary to work on all indexes
@@ -73,16 +73,16 @@ dedupe_wide <- function(x, cols_dedupe, cols_expand = NULL, max_new_cols = NULL,
         names(x_2)[names(x_2) %in% cols_expand] <- sapply(names(x_2)[names(x_2) %in% cols_expand], function(x) paste0(x, "....", seq_len(length(x))))
       }
 
-      if (indexes_more_than_one_occurence[, .N] > 0L) {
-        indexes_more_than_one_occurence_vector <- indexes_more_than_one_occurence[, list(indexes = unique(sort(unlist(V1, use.names = FALSE), decreasing = TRUE)))][["indexes"]] # exclude indexes where main and rest are the same, decreasing order - important!
+      if (indexes_more_than_one_occurrence[, .N] > 0L) {
+        indexes_more_than_one_occurrence_vector <- indexes_more_than_one_occurrence[, list(indexes = unique(sort(unlist(V1, use.names = FALSE), decreasing = TRUE)))][["indexes"]] # exclude indexes where main and rest are the same, decreasing order - important!
 
-        indexes_more_than_one_occurence[, V1 := lapply(V1, function(x) x[-which.min(x)])] # min number will be key
-        indexes_more_than_one_occurence <- indexes_more_than_one_occurence[, list(rest_indexes = unlist(V1, use.names = FALSE)), by = main_index]
-        setorder(indexes_more_than_one_occurence, -rest_indexes, -main_index) # for cascading we need specific order, so on the end the lowest number in each group will be a key
-        indexes_more_than_one_occurence <- unique(indexes_more_than_one_occurence)
+        indexes_more_than_one_occurrence[, V1 := lapply(V1, function(x) x[-which.min(x)])] # min number will be key
+        indexes_more_than_one_occurrence <- indexes_more_than_one_occurrence[, list(rest_indexes = unlist(V1, use.names = FALSE)), by = main_index]
+        setorder(indexes_more_than_one_occurrence, -rest_indexes, -main_index) # for cascading we need specific order, so on the end the lowest number in each group will be a key
+        indexes_more_than_one_occurrence <- unique(indexes_more_than_one_occurrence)
 
-        indexes_more_than_one_occurence <- cascade_indexes(indexes_more_than_one_occurence_vector, indexes_more_than_one_occurence) # simulate process of deduplication on indexes
-        dedupe_indexes(indexes_more_than_one_occurence, x) # dedupe indexes in main data
+        indexes_more_than_one_occurrence <- cascade_indexes(indexes_more_than_one_occurrence_vector, indexes_more_than_one_occurrence) # simulate process of deduplication on indexes
+        dedupe_indexes(indexes_more_than_one_occurrence, x) # dedupe indexes in main data
       }
 
       expanded_columns <- expand_columns(x, cols_dedupe, cols_expand, max_new_cols)
@@ -175,24 +175,24 @@ find_duplicated_indexes <- function(x, cols_dedupe) {
   }
 }
 
-cascade_indexes <- function(indexes_more_than_one_occurence_vector, indexes_more_than_one_occurence) {
+cascade_indexes <- function(indexes_more_than_one_occurrence_vector, indexes_more_than_one_occurrence) {
   rest_indexes <- main_index <- filter <- NULL
-  for (i in indexes_more_than_one_occurence_vector) {
-    which <- which(indexes_more_than_one_occurence[["rest_indexes"]] == i)
-    value <- shift(indexes_more_than_one_occurence[which][["main_index"]], fill = i)
-    set(indexes_more_than_one_occurence, which, "rest_indexes", value)
-    setorder(indexes_more_than_one_occurence, -rest_indexes, -main_index)
+  for (i in indexes_more_than_one_occurrence_vector) {
+    which <- which(indexes_more_than_one_occurrence[["rest_indexes"]] == i)
+    value <- shift(indexes_more_than_one_occurrence[which][["main_index"]], fill = i)
+    set(indexes_more_than_one_occurrence, which, "rest_indexes", value)
+    setorder(indexes_more_than_one_occurrence, -rest_indexes, -main_index)
   }
-  indexes_more_than_one_occurence[, filter := fifelse(main_index == rest_indexes, FALSE, TRUE)]
-  indexes_more_than_one_occurence <- indexes_more_than_one_occurence[filter == TRUE][, filter := NULL]
-  indexes_more_than_one_occurence <- unique(indexes_more_than_one_occurence, by = "rest_indexes")
-  indexes_more_than_one_occurence
+  indexes_more_than_one_occurrence[, filter := fifelse(main_index == rest_indexes, FALSE, TRUE)]
+  indexes_more_than_one_occurrence <- indexes_more_than_one_occurrence[filter == TRUE][, filter := NULL]
+  indexes_more_than_one_occurrence <- unique(indexes_more_than_one_occurrence, by = "rest_indexes")
+  indexes_more_than_one_occurrence
 }
 
-dedupe_indexes <- function(indexes_more_than_one_occurence, x) {
-  for (i in seq_len(indexes_more_than_one_occurence[, .N])) {
-    which <- which(x[["....idx"]] == indexes_more_than_one_occurence[["rest_indexes"]][[i]])
-    value <- indexes_more_than_one_occurence[["main_index"]][[i]]
+dedupe_indexes <- function(indexes_more_than_one_occurrence, x) {
+  for (i in seq_len(indexes_more_than_one_occurrence[, .N])) {
+    which <- which(x[["....idx"]] == indexes_more_than_one_occurrence[["rest_indexes"]][[i]])
+    value <- indexes_more_than_one_occurrence[["main_index"]][[i]]
     set(x, which, "....idx", value)
   }
 }

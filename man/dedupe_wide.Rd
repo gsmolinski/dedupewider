@@ -34,7 +34,7 @@ non-consistent data into newly created additional columns.
 \details{
 Columns passed to \code{cols_dedupe} must be atomic.
 
-Althought \code{\link[base]{duplicated}} or \code{\link[base]{unique}} treats missing data (\code{NA}) as duplicated data, this function do not do this (see second example below).
+Although \code{\link[base]{duplicated}} or \code{\link[base]{unique}} treats missing data (\code{NA}) as duplicated data, this function do not do this (see second example below).
 }
 \note{
 Internally, function is mainly based on \code{\link[=data.table]{data.table}} functions and thus enabling parallel computation
