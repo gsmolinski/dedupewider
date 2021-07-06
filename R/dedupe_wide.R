@@ -155,12 +155,12 @@ check_prerequisites <- function(x, cols_dedupe, cols_expand, max_new_cols, enabl
 }
 
 find_duplicated_indexes <- function(x, cols_dedupe) {
-  variable <- V1 <- ....idx <- filter_col <- NULL
+  variable <- value <- V1 <- ....idx <- filter_col <- NULL
   x_tmp <- suppressWarnings(melt.data.table(x, id.vars = "....idx", measure.vars = cols_dedupe, na.rm = TRUE))
   if (x_tmp[, .N] > 0L) { # in case we had data.frame with all NA in all cols_dedupe columns
     x_tmp[, variable := NULL]
     setkey(x_tmp, "value") # to speedup
-    x_tmp[, V1 := list(list(....idx)), by = "value"][, ....idx := NULL]
+    x_tmp[, V1 := list(list(....idx)), by = value][, ....idx := NULL]
     x_tmp <- unique(x_tmp, by = "value")
     x_tmp[, `:=`(filter_col = lengths(V1),
                  value = NULL)]
