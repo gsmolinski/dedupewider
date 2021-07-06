@@ -28,7 +28,7 @@ If duplicated data found - data.frame with changed columns' names and optionally
 }
 \description{
 Collapse many rows connected by duplicated data (which can exist in different
-rows and columns) to one, based on data in chosen columns, optionally putting
+rows and columns) into one, based on data in chosen columns, optionally putting
 non-consistent data into newly created additional columns.
 }
 \details{

@@ -1,7 +1,7 @@
 #' Dedupe across multiple columns
 #'
 #' Collapse many rows connected by duplicated data (which can exist in different
-#' rows and columns) to one, based on data in chosen columns, optionally putting
+#' rows and columns) into one, based on data in chosen columns, optionally putting
 #' non-consistent data into newly created additional columns.
 #'
 #' @param x A data.frame without column named '....idx' and any column which ends by four dots and number (e.g. 'column....2').
