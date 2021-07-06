@@ -9,7 +9,7 @@
 status](https://www.r-pkg.org/badges/version/dedupewider)](https://CRAN.R-project.org/package=dedupewider)
 <!-- badges: end -->
 
-Duplicated data can exists in different rows and columns and user may
+Duplicated data can exist in different rows and columns and user may
 need to treat observations (rows) connected by duplicated data as one
 observation, e.g. companies can belong to one family (and thus: be one
 company) by sharing some telephone numbers. This package provides a
