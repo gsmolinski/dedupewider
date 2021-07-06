@@ -11,8 +11,10 @@
 #' @param enable_drop A logical vector length 1: should given column be dropped if (after deduplication) contains only missing data (\code{NA})? Applicable only to columns used to dedupe.
 #' @details Columns passed to \code{cols_dedupe} must be atomic.
 #'
+#' Row names will always be removed. If you want to preserve row names, simply put in into separate column. Note that if this column won't be passed to \code{cols_expand} argument, only the one row name for duplicated rows will be preserved (row name closest to the top of the table).
+#'
 #' Although \code{\link[base]{duplicated}} or \code{\link[base]{unique}} treats missing data (\code{NA}) as duplicated data, this function do not do this (see second example below).
-#' @return If duplicated data found - data.frame with changed columns' names and optionally additional columns (in some cases less columns, depends on \code{enable_drop} argument). Otherwise data.frame without changes.
+#' @return If duplicated data found - data.frame with changed columns' names and optionally additional columns (in some cases less columns, depends on \code{enable_drop} argument). Otherwise data.frame without changes (except row names removed).
 #' @export
 #' @import data.table
 #' @note Internally, function is mainly based on \code{\link[=data.table]{data.table}} functions and thus enabling parallel computation
