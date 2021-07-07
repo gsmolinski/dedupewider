@@ -19,15 +19,15 @@ collapse it into one row.
 Function from this package was used in CATI surveys (especially on
 businesses databases) to minimize the chance that interviewers will call
 independently the same respondent and thus irritate her or him. It is a
-chance that the same, suitable person to participate in the survey, work
-in more than one company and that these companies exist as a separate
-records in the database (sometimes just as a separate companies,
-sometimes as a branches). When trying to find participant in company X,
-interviewer can be switched to company C to speak with employee E and
-the second interviewer, when calling company Y, can also be switched to
-company C to speak with employee E. If some data in database (like phone
-numbers) can be use to collapse companies X, Y and C into one record,
-the chance for this inconvenience will be much lower.
+chance that the same, suitable person to participate in the survey,
+works in more than one company and that these companies exist as a
+separate records in the database (sometimes just as a separate
+companies, sometimes as a branches). When trying to find participant in
+company X, interviewer can be switched to company C to speak with
+employee E and the second interviewer, when calling company Y, can also
+be switched to company C to speak with employee E. If some data in
+database (like phone numbers) can be use to collapse companies X, Y and
+C into one record, the chance for this inconvenience will be much lower.
 
 ## Installation
 
