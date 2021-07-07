@@ -224,6 +224,7 @@ expand_columns <- function(x, cols_dedupe, cols_expand, max_new_cols) {
   classes <- rbindlist(list(data.frame(type = "integer", variable = "....idx", variable_pasted = "....idx"), classes))
   x_tmp[, variable := NULL]
   x_tmp <- dcast.data.table(x_tmp, ....idx ~ variable_pasted)
+  classes <- classes[variable_pasted %in% names(x_tmp)]
   classes_types <- classes[["type"]]
   for (col in seq_len(classes[, .N])) {
     set(x_tmp, j = col, value = methods::as(x_tmp[[col]], classes_types[[col]]))
