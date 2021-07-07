@@ -202,7 +202,7 @@ dedupe_indexes <- function(indexes_more_than_one_occurrence, x) {
 }
 
 expand_columns <- function(x, cols_dedupe, cols_expand, max_new_cols) {
-  variable <- value <- ....idx <- number <- NULL
+  variable <- variable_pasted <- value <- ....idx <- number <- NULL
   x_tmp <- x[, .SD, .SDcols = names(x)[names(x) %in% c("....idx", cols_dedupe, cols_expand)]]
   x_tmp <- suppressWarnings(melt.data.table(x_tmp, measure.vars = cols_dedupe, na.rm = TRUE)) # because we want to treat cols_dedupe as one column, not in separate
   x_tmp[, variable := NULL]
@@ -225,7 +225,7 @@ expand_columns <- function(x, cols_dedupe, cols_expand, max_new_cols) {
   x_tmp[, variable := NULL]
   x_tmp <- dcast.data.table(x_tmp, ....idx ~ variable_pasted)
   for (col in seq_len(classes[, .N])) {
-    set(x_tmp, j = col, value = as(x_tmp[[col]], classes[["type"]][[col]]))
+    set(x_tmp, j = col, value = methods::as(x_tmp[[col]], classes[["type"]][[col]]))
   } # we want to preserve original types of columns
   x_tmp
 }
