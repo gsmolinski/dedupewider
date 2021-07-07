@@ -25,9 +25,9 @@
 #' x <- data.frame(tel_1 = c(111, 222, 444, 555),
 #'                 tel_2 = c(222, 666, 666, 555),
 #'                 name = paste0("name", 1:4))
-#'# rows 1, 2, 3 share the same phone numbers
+#' # rows 1, 2, 3 share the same phone numbers
 #'
-#'dedupe_wide(x,
+#' dedupe_wide(x,
 #'            cols_dedupe = c("tel_1", "tel_2"),
 #'            cols_expand = "name")
 #' # first three collapsed into one, for name4 keeped only one phone number (555)
