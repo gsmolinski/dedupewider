@@ -220,12 +220,13 @@ expand_columns <- function(x, cols_dedupe, cols_expand, max_new_cols) {
                number = NULL)]
   cols_names_for_classes <- unique(x_tmp[, list(variable_pasted, variable)], by = "variable_pasted")
   classes <- classes[cols_names_for_classes, on = "variable"]
-  setorder(classes, variable_pasted)
+  setorder(classes, variable_pasted) # the same order as after dcast
   classes <- rbindlist(list(data.frame(type = "integer", variable = "....idx", variable_pasted = "....idx"), classes))
   x_tmp[, variable := NULL]
   x_tmp <- dcast.data.table(x_tmp, ....idx ~ variable_pasted)
+  classes_types <- classes[["type"]]
   for (col in seq_len(classes[, .N])) {
-    set(x_tmp, j = col, value = methods::as(x_tmp[[col]], classes[["type"]][[col]]))
+    set(x_tmp, j = col, value = methods::as(x_tmp[[col]], classes_types[[col]]))
   } # we want to preserve original types of columns
   x_tmp
 }
