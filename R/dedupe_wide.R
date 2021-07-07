@@ -14,6 +14,8 @@
 #' Row names will always be removed. If you want to preserve row names, simply put in into separate column. Note that if this column won't be passed to \code{cols_expand} argument, only the one row name for duplicated rows will be preserved (row name closest to the top of the table).
 #'
 #' Although \code{\link[base]{duplicated}} or \code{\link[base]{unique}} treats missing data (\code{NA}) as duplicated data, this function do not do this (see second example below).
+#'
+#' Type of columns passed to \code{cols_dedupe} will be coerced to the most general type.
 #' @return If duplicated data found - data.frame with changed columns' names and optionally additional columns (in some cases less columns, depends on \code{enable_drop} argument). Otherwise data.frame without changes (except row names removed).
 #' @export
 #' @import data.table
@@ -206,15 +208,25 @@ expand_columns <- function(x, cols_dedupe, cols_expand, max_new_cols) {
   x_tmp[, variable := NULL]
   names(x_tmp)[names(x_tmp) == "value"] <- cols_dedupe[1L] # to get a name of cols_dedupe first column as a base to make names to cols_dedupe after expand
   setkey(x_tmp, "....idx")
+  classes <- x_tmp[, list(type = lapply(.SD, typeof))]
+  classes[, variable := names(x_tmp)]
   x_tmp <- suppressWarnings(melt.data.table(x_tmp, id.vars = "....idx", na.rm = TRUE))
   x_tmp <- x_tmp[, list(value = unique(value)), by = list(....idx, variable)]
   x_tmp[, number := seq_len(.N), by = list(....idx, variable)]
   if (!is.null(max_new_cols) && max_new_cols < max(x_tmp$number)) {
     x_tmp <- x_tmp[number <= max_new_cols]
   }
-  x_tmp[, `:=`(variable = paste0(variable, "....", number),
+  x_tmp[, `:=`(variable_pasted = paste0(variable, "....", number),
                number = NULL)]
-  x_tmp <- dcast.data.table(x_tmp, ....idx ~ variable)
+  cols_names_for_classes <- unique(x_tmp[, list(variable_pasted, variable)], by = "variable_pasted")
+  classes <- classes[cols_names_for_classes, on = "variable"]
+  setorder(classes, variable_pasted)
+  classes <- rbindlist(list(data.frame(type = "integer", variable = "....idx", variable_pasted = "....idx"), classes))
+  x_tmp[, variable := NULL]
+  x_tmp <- dcast.data.table(x_tmp, ....idx ~ variable_pasted)
+  for (col in seq_len(classes[, .N])) {
+    set(x_tmp, j = col, value = as(x_tmp[[col]], classes[["type"]][[col]]))
+  } # we want to preserve original types of columns
   x_tmp
 }
 

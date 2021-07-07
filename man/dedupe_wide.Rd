@@ -37,6 +37,8 @@ Columns passed to \code{cols_dedupe} must be atomic.
 Row names will always be removed. If you want to preserve row names, simply put in into separate column. Note that if this column won't be passed to \code{cols_expand} argument, only the one row name for duplicated rows will be preserved (row name closest to the top of the table).
 
 Although \code{\link[base]{duplicated}} or \code{\link[base]{unique}} treats missing data (\code{NA}) as duplicated data, this function do not do this (see second example below).
+
+Type of columns passed to \code{cols_dedupe} will be coerced to the most general type.
 }
 \note{
 Internally, function is mainly based on \code{\link[=data.table]{data.table}} functions and thus enabling parallel computation

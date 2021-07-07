@@ -1,6 +1,6 @@
 Package: dedupewider
 Title: Deduplication Across Multiple Columns
-Version: 0.0.1.9000
+Version: 0.0.1
 Authors@R: 
     person("Grzegorz",
            "Smoliński",
