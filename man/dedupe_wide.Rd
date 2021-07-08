@@ -53,8 +53,8 @@ x <- data.frame(tel_1 = c(111, 222, 444, 555),
 dedupe_wide(x,
            cols_dedupe = c("tel_1", "tel_2"),
            cols_expand = "name")
-# first three collapsed into one, for name4 keeped only one phone number (555)
-# 'name1', 'name2', 'name3' keeped in new columns
+# first three collapsed into one, for name4 kept only one phone number (555)
+# 'name1', 'name2', 'name3' kept in new columns
 
 y <- data.frame(tel_1 = c(777, 888, NA, NA),
                 tel_2 = c(888, 777, NA, NA),
