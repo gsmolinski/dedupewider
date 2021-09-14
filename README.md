@@ -7,6 +7,8 @@
 
 [![CRAN
 status](https://www.r-pkg.org/badges/version/dedupewider)](https://CRAN.R-project.org/package=dedupewider)
+[![CRAN RStudio mirror
+downloads](https://cranlogs.r-pkg.org/badges/grand-total/dedupewider?color=blue)](https://r-pkg.org/pkg/dedupewider)
 <!-- badges: end -->
 
 Duplicated data can exist in different rows and columns and user may
