@@ -64,3 +64,7 @@ table_deduplicated <- dedupe_wide(initial_table, cols_dedupe = paste0("tel_", 1:
                                   cols_expand = "name")
 table_deduplicated
 ```
+
+Please refer to a vignette for step-by-step explanation as well as
+information about algorithm used: [Usage and algorithm
+explained](https://cran.r-project.org/web/packages/dedupewider/vignettes/usage-and-algorithm-explained.html)
