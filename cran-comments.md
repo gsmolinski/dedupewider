@@ -1,3 +1,6 @@
+## Resubmission
+* in README I have changed link to canonical form
+
 ## Test environments
 * R-hub Fedora Linux, R-devel, clang, gfortran
 * R-hub Ubuntu Linux 20.04.1 LTS, R-release, GCC
