@@ -60,9 +60,23 @@ initial_table <- data.frame(tel_1 = c(111, 222, 444, 555),
                             name = paste0("name", 1:4),
                             nace = c("01.19", "01.64", "55.90", "09.10"))
 
+# Rows 1, 2 and 3 share the same phone number and thus will be collapsed into one row
+# In row 4 the same phone number will be removed to left only unique entry (555)
+initial_table
+
+#>   tel_1 tel_2 tel_3 tel_4 tel_5  name  nace
+#> 1   111   222    NA    NA    NA name1 01.19
+#> 2   222   666    NA    NA    NA name2 01.64
+#> 3   444   666    NA    NA    NA name3 55.90
+#> 4   555   555   555   555   555 name4 09.10
+
 table_deduplicated <- dedupe_wide(initial_table, cols_dedupe = paste0("tel_", 1:5),
                                   cols_expand = "name")
 table_deduplicated
+
+#>   tel_1....1 tel_1....2 tel_1....3 tel_1....4 name....1 name....2 name....3  nace
+#> 1        111        222        444        666     name1     name2     name3 01.19
+#> 2        555         NA         NA         NA     name4      <NA>      <NA> 09.10
 ```
 
 Please refer to a vignette for step-by-step explanation as well as
