@@ -16,7 +16,7 @@ na_move(data, cols = names(data), direction = "right")
 "bottom", "left"}. If \code{NULL}, \code{"right"} direction will be used.}
 }
 \value{
-A data.frame with only these attributes preserved, which are returned by \code{\link[=base]{attributes}}
+A data.frame with only these attributes preserved, which are returned by \code{\link[base]{attributes}}
 function.
 }
 \description{

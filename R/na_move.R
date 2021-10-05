@@ -66,12 +66,14 @@ na_move <- function(data, cols = names(data), direction = "right") {
 }
 
 melt_data <- function(data) {
+  ....idx <- NULL
   data[, ....idx := .I]
   data <- suppressWarnings(melt.data.table(data, id.vars = "....idx", na.rm = TRUE)) # ....idx was needed for melting
   data
 }
 
 dcast_data <- function(data, direction) {
+  ....idx <- variable <- NULL
   # easier to work with just "....idx" column name
   setnames(data, 1L, "....idx")
   data[, variable := NULL] # we won't use it for dcast
