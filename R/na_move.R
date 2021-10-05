@@ -1,19 +1,31 @@
-#' Title
+#' Move \code{NA} across columns or rows
 #'
-#' @param data
-#' @param cols
-#' @param direction
+#' For chosen columns, move \code{NA} to top or bottom (i.e. across rows)
+#' or right or left (i.e. across columns).
 #'
-#' @return
+#' @param data A data.frame without column named '....idx'.
+#' @param cols A character vector of columns' names in \code{data} across which function will be performed. If
+#' \code{NULL}, first column in \code{data} will be used.
+#' @param direction A character vector of length 1 indicating where to move \code{NA}. Can be one of \code{"top", "right",
+#' "bottom", "left"}. If \code{NULL}, \code{"right"} direction will be used.
+#'
+#' @return A data.frame with only these attributes preserved, which are returned by \code{\link[base]{attributes}}
+#' function.
 #' @export
 #'
 #' @examples
+#' data <- data.frame(col1 = c(1, 2, 3),
+#'                    col2 = c(NA, NA, 4),
+#'                    col3 = c(5, NA, NA),
+#'                    col4 = c(6, 7, 8))
+#' data
+#' na_move(data, c("col2", "col3", "col4"), direction = "right")
 na_move <- function(data, cols = names(data), direction = "right") {
   direction <- match.arg(direction, c("right", "bottom", "left", "top"))
-  cols <- match.arg(cols, names(dane), several.ok = TRUE)
+  cols <- match.arg(cols, names(data), several.ok = TRUE)
 
   attributes_data <- attributes(data)
-  data <- copy(dane)
+  data <- copy(data)
 
   if (!is.data.table(data)) {
     setDT(data)
