@@ -1,7 +1,7 @@
 #' Move \code{NA} across columns or rows
 #'
-#' For chosen columns, move \code{NA} to top or bottom (i.e. across rows)
-#' or to right or left (i.e. across columns).
+#' For chosen columns, move \code{NA} to right or left (i.e. across columns)
+#' or to top or bottom (i.e. across rows).
 #'
 #' @param data A data.frame without column named "....idx".
 #' @param cols A character vector of columns' names in \code{data} across which function will be performed. If
