@@ -7,7 +7,7 @@
 na_move(data, cols = names(data), direction = "right")
 }
 \arguments{
-\item{data}{A data.frame without column named '....idx'.}
+\item{data}{A data.frame without column named "....idx".}
 
 \item{cols}{A character vector of columns' names in \code{data} across which function will be performed. If
 \code{NULL}, first column in \code{data} will be used.}
@@ -17,11 +17,11 @@ na_move(data, cols = names(data), direction = "right")
 }
 \value{
 A data.frame with only these attributes preserved, which are returned by \code{\link[base]{attributes}}
-function.
+function used on object passed to \code{data} parameter.
 }
 \description{
 For chosen columns, move \code{NA} to top or bottom (i.e. across rows)
-or right or left (i.e. across columns).
+or to right or left (i.e. across columns).
 }
 \examples{
 data <- data.frame(col1 = c(1, 2, 3),

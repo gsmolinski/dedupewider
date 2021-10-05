@@ -1,16 +1,16 @@
 #' Move \code{NA} across columns or rows
 #'
 #' For chosen columns, move \code{NA} to top or bottom (i.e. across rows)
-#' or right or left (i.e. across columns).
+#' or to right or left (i.e. across columns).
 #'
-#' @param data A data.frame without column named '....idx'.
+#' @param data A data.frame without column named "....idx".
 #' @param cols A character vector of columns' names in \code{data} across which function will be performed. If
 #' \code{NULL}, first column in \code{data} will be used.
 #' @param direction A character vector of length 1 indicating where to move \code{NA}. Can be one of \code{"top", "right",
 #' "bottom", "left"}. If \code{NULL}, \code{"right"} direction will be used.
 #'
 #' @return A data.frame with only these attributes preserved, which are returned by \code{\link[base]{attributes}}
-#' function.
+#' function used on object passed to \code{data} parameter.
 #' @export
 #'
 #' @examples
@@ -78,7 +78,7 @@ dcast_data <- function(data, direction) {
   setnames(data, 1L, "....idx")
   data[, variable := NULL] # we won't use it for dcast
 
-  data <- dcast.data.table(data, ....idx ~ rowid(....idx, prefix = "col"), value.var = "value") # ....idxs as rows
+  data <- dcast.data.table(data, ....idx ~ rowid(....idx, prefix = "col"), value.var = "value")
 
   data[, ....idx := NULL]
   data
