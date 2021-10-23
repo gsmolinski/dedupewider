@@ -1,7 +1,10 @@
-## Resubmission
-* in README I have changed link to canonical form
+## Changes' overview in this version
+
+* New function (`na_move`) added
+* Documentation, description, documents adjusted to the fact that new function was added
 
 ## Test environments
+
 * R-hub Fedora Linux, R-devel, clang, gfortran
 * R-hub Ubuntu Linux 20.04.1 LTS, R-release, GCC
 * CRAN win-builder (devel)
@@ -9,9 +12,3 @@
 ## R CMD check results
 
 0 errors | 0 warnings | 0 note
-
-## Changes' overview in this version
-
-* Function's documentation improved
-* Depends on R 3.2.0 instead of 3.1.0 (nothing has changed in code, it was mistake in the previous version)
-* Logo and more detailed explanation added to README

@@ -1,6 +1,6 @@
 Package: dedupewider
 Title: Deduplication Across Multiple Columns
-Version: 0.0.2.9000
+Version: 0.1.0.9000
 Authors@R: 
     person("Grzegorz",
            "Smoliński",
@@ -9,7 +9,7 @@ Authors@R:
 Description: Duplicated data can exist in different rows and columns and user may need to
     treat observations (rows) connected by duplicated data as one observation,
     e.g. companies can belong to one family (and thus: be one company) by sharing
-    some telephone numbers. This package provides a function to find connected rows
+    some telephone numbers. This package allows to find connected rows
     based on data on chosen columns and collapse it into one row.
 License: MIT + file LICENSE
 URL: https://github.com/gsmolinski/dedupewider
