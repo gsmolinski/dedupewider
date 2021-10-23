@@ -80,5 +80,5 @@ table_deduplicated
 ```
 
 Please refer to a vignette for step-by-step explanation as well as
-information about algorithm used: [Usage and algorithm
-explained](https://CRAN.R-project.org/package=dedupewider/vignettes/usage-and-algorithm-explained.html)
+information about algorithm used: [Usage and Algorithm
+Explained](https://CRAN.R-project.org/package=dedupewider/vignettes/usage-and-algorithm-explained.html)

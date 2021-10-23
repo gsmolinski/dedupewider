@@ -1,5 +1,5 @@
 ---
-title: "Usage and algorithm explained"
+title: "Usage and Algorithm Explained"
 output: rmarkdown::html_vignette
 vignette: >
   %\VignetteIndexEntry{Usage and algorithm explained}
@@ -51,7 +51,7 @@ This method was used in CATI surveys (especially on businesses databases) to min
 
 ## Usage
 
-After attach the package: `library(dedupewider)`, one function will be available to use: `dedupe_wide()`. We will show the usage of this function using the table presented below:
+To attach the package, use: `library(dedupewider)`. We will show the usage of `dedupe_wide()` function using the table presented below:
 
 ```{r initial-table-usage}
 initial_table <- data.frame(tel_1 = c(111, 222, 444, 555),
@@ -93,6 +93,7 @@ We can see that:
 - all unique information from column "name" was preserved and these columns were renamed
 - for the rest columns ("nace") just one code was preserved - it is always the data from the row which is closest to the beginning of the table
 - order of rows and columns was preserved, **however, it is important to note that for `cols_dedupe` first element of names passed to it will be used as a base for new names of columns and to determine the place for these columns**
+- `NA` values were moved to right. If you want different result, like moving them to the left or even top or bottom, check out the `na_move` function.
 
 Of course, columns passed to `cols_expand` are treat as separate columns, so data is not mixed:
 
