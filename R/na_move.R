@@ -45,7 +45,9 @@ na_move <- function(data, cols = names(data), direction = "right") {
 
     add_missing_cols(data, cols) # modify data in place, so no assignment
 
-    reverse_direction(data, cols, direction) # modify data in place, so no assignment
+    if (direction == "left") {
+      reverse_direction(data, cols, direction) # modify data in place, so no assignment
+    }
 
     if (exists("data_rest")) {
       data <- cbind.data.frame(data, data_rest)
@@ -95,10 +97,8 @@ add_missing_cols <- function(data, cols) {
 }
 
 reverse_direction <- function(data, cols, direction) {
-  if (direction == "left") {
     setcolorder(data, rev(cols))
     setnames(data, names(data), cols)
-  }
 }
 
 top_bottom_move <- function(vec, direction) {
