@@ -73,8 +73,8 @@ melt_data <- function(data) {
   indexes <- data[, .(....idx)] # just in case if the row contained only NA so will be removed and we want it back
   data <- suppressWarnings(melt.data.table(data, id.vars = "....idx", na.rm = TRUE)) # ....idx was needed for melting
   if (indexes[, .N] > uniqueN(data, by = "....idx")) { # in case row was removed because contained only NA
-    data <- data[indexes, on = "....idx"] # we add this row
-    data[is.na(variable), variable := "col1"] # rest of columns will be filled by NA later, so we need just col1
+    data <- data[indexes, on = "....idx"] # we add this row, rest of columns have NA for this added row(s)
+    data[is.na(variable), variable := "col1"] # rest will be filled by NA later, so we need just col1
   }
   data
 }
