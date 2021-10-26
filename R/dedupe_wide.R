@@ -44,7 +44,7 @@
 #' # first two rows collapsed into one, nothing change for the rest of rows
 dedupe_wide <- function(x, cols_dedupe, cols_expand = NULL, max_new_cols = NULL, enable_drop = TRUE) {
   ....idx <- filter_col <- V1 <- main_index <- rest_indexes <- value <- NULL
-  check_prerequisites(x, cols_dedupe, cols_expand, max_new_cols, enable_drop)
+  check_prerequisites_dedupe_wide(x, cols_dedupe, cols_expand, max_new_cols, enable_drop)
   class_x <- attr(x, "class")
   pointer_x <- attr(x, ".internal.selfref")
   x <- copy(x)
@@ -126,7 +126,7 @@ dedupe_wide <- function(x, cols_dedupe, cols_expand = NULL, max_new_cols = NULL,
   }
 }
 
-check_prerequisites <- function(x, cols_dedupe, cols_expand, max_new_cols, enable_drop) {
+check_prerequisites_dedupe_wide <- function(x, cols_dedupe, cols_expand, max_new_cols, enable_drop) {
   if (!is.data.frame(x)) {
     stop(paste0("x must be of class data.frame, but is ", paste0(class(x), collapse = ", "), "."))
   } else if (anyNA(cols_dedupe) || is.null(cols_dedupe)) {

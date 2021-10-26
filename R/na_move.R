@@ -23,6 +23,7 @@
 na_move <- function(data, cols = names(data), direction = "right") {
   direction <- match.arg(direction, c("right", "bottom", "left", "top"))
   cols <- match.arg(cols, names(data), several.ok = TRUE)
+  check_prerequisites_na_move(data)
 
   attributes_data <- attributes(data)
   data <- copy(data)
@@ -65,6 +66,12 @@ na_move <- function(data, cols = names(data), direction = "right") {
   attributes(data) <- attributes_data
 
   data
+}
+
+check_prerequisites_na_move <- function(data) {
+  if (any(names(data) == "....idx")) {
+    stop("Argument passed to data cannot contain column named '....idx'")
+  }
 }
 
 melt_data <- function(data) {
