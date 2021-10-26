@@ -5,9 +5,9 @@
 #'
 #' @param data A data.frame without column named "....idx".
 #' @param cols A character vector of columns' names in \code{data} across which function will be performed. If
-#' \code{NULL}, first column in \code{data} will be used.
+#' \code{NULL}, first column in \code{data} will be used. By default all columns will be used.
 #' @param direction A character vector of length 1 indicating where to move \code{NA}. Can be one of \code{"top", "right",
-#' "bottom", "left"}. If \code{NULL}, \code{"right"} direction will be used.
+#' "bottom", "left"}. If \code{NULL} and also by default, \code{"right"} direction will be used.
 #'
 #' @return A data.frame with only these attributes preserved, which are returned by \code{\link[base]{attributes}}
 #' function used on object passed to \code{data} parameter.
@@ -70,7 +70,9 @@ na_move <- function(data, cols = names(data), direction = "right") {
 
 check_prerequisites_na_move <- function(data) {
   if (any(names(data) == "....idx")) {
-    stop("Argument passed to data cannot contain column named '....idx'")
+    stop("Argument passed to data cannot contain column named '....idx'.")
+  } else if (!is.data.frame(data)) {
+    stop(paste0("data must be of class data.frame, but is ", paste0(class(data), collapse = ", "), "."))
   }
 }
 
