@@ -58,3 +58,8 @@ test_that("even if row contains only NA, function works", {
   df_moved <- na_move(df_simple)
   expect_equal(nrow(df_simple), nrow(df_moved))
 })
+
+test_that("errors if prerequisites not met", {
+  names(df_simple)[[1]] <- "....idx"
+  expect_error(na_move(df_simple), "Argument passed to data cannot contain column named '....idx'")
+})
