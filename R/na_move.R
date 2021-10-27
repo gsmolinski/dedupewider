@@ -9,9 +9,14 @@
 #' @param direction A character vector of length 1 indicating where to move \code{NA}. Can be one of \code{"top", "right",
 #' "bottom", "left"}. If \code{NULL} and also by default, \code{"right"} direction will be used.
 #'
-#' @return A data.frame with only these attributes preserved, which are returned by \code{\link[base]{attributes}}
+#' @return
+#' A data.frame with only these attributes preserved, which are returned by \code{\link[base]{attributes}}
 #' function used on object passed to \code{data} parameter.
-#' @note Internally, function is mainly based on \code{\link[=data.table]{data.table}} functions and thus enabling parallel computation
+#'
+#' Type of columns passed to \code{cols} will be coerced to the most general type, although sometimes when
+#' column contains only \code{NA}, that column will be of type logical.
+#' @note
+#' Internally, function is mainly based on \code{\link[=data.table]{data.table}} functions and thus enabling parallel computation
 #' is possible. To do this, just call \code{\link[data.table]{setDTthreads}} before calling \code{na_move} function.
 #' @export
 #' @import data.table
@@ -28,7 +33,7 @@ na_move <- function(data, cols = names(data), direction = "right") {
   check_prerequisites_na_move(data)
 
   attributes_data <- attributes(data)
-  cols_all <- names(data) # before setDT, because names makes reference
+  cols_all <- names(data) # before setDT and before copy, because names() makes reference
   data <- copy(data)
 
   if (!is.data.table(data)) {
@@ -79,22 +84,33 @@ check_prerequisites_na_move <- function(data) {
 }
 
 melt_data <- function(data) {
-  ....idx <- NULL
+  ....idx <- value <- variable <-  NULL
   data[, ....idx := .I]
-  indexes <- data[, .(....idx)] # just in case if the row contained only NA so will be removed and we want it back
+  indexes <- data[, list(....idx)] # just in case if the row contained only NA so will be removed and we want it back
   data <- suppressWarnings(melt.data.table(data, id.vars = "....idx", na.rm = TRUE)) # ....idx was needed for melting
-  if (indexes[, .N] > uniqueN(data, by = "....idx")) { # in case row was removed because contained only NA
-    data <- data[indexes, on = "....idx"] # we add this row, rest of columns have NA for this added row(s)
-    data[is.na(variable), variable := "col1"] # rest will be filled by NA later, so we need just col1
+
+  # we need to move NA to the bottom; NA are not remove during melt if at least one column was of type list
+  is_value_list <- typeof(data$value) == "list"
+  if (is_value_list) {
+    data_na <- data[is.na(value)]
+    data <- data[!is.na(value)]
+    data <- rbindlist(list(data, data_na))
   }
+
+  if (!is_value_list) { # if a list, then for sure no missing IDs (because nothing is removed during melt)
+    if (indexes[, .N] > uniqueN(data, by = "....idx")) { # in case row was removed because contained only NA
+      data <- data[indexes, on = "....idx"] # we add this row, rest of columns have NA for this added row(s)
+      data[is.na(variable), variable := "col1"] # rest will be filled by NA later, so we need just col1
+    }
+  }
+
   data
 }
 
 dcast_data <- function(data, direction) {
-  ....idx <- variable <- NULL
+  ....idx <- NULL
   # easier to work with just "....idx" column name
   setnames(data, 1L, "....idx")
-  data[, variable := NULL] # we won't use it for dcast
 
   data <- dcast.data.table(data, ....idx ~ rowid(....idx, prefix = "col"), value.var = "value")
 
