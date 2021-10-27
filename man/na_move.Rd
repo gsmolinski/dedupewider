@@ -18,6 +18,9 @@ na_move(data, cols = names(data), direction = "right")
 \value{
 A data.frame with only these attributes preserved, which are returned by \code{\link[base]{attributes}}
 function used on object passed to \code{data} parameter.
+
+Type of columns passed to \code{cols} will be coerced to the most general type, although sometimes when
+column contains only \code{NA}, that column will be of type logical.
 }
 \description{
 For chosen columns, move \code{NA} to right or left (i.e. across columns)
