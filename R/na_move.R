@@ -11,8 +11,10 @@
 #'
 #' @return A data.frame with only these attributes preserved, which are returned by \code{\link[base]{attributes}}
 #' function used on object passed to \code{data} parameter.
+#' @note Internally, function is mainly based on \code{\link[=data.table]{data.table}} functions and thus enabling parallel computation
+#' is possible. To do this, just call \code{\link[data.table]{setDTthreads}} before calling \code{na_move} function.
 #' @export
-#'
+#' @import data.table
 #' @examples
 #' data <- data.frame(col1 = c(1, 2, 3),
 #'                    col2 = c(NA, NA, 4),
@@ -26,8 +28,8 @@ na_move <- function(data, cols = names(data), direction = "right") {
   check_prerequisites_na_move(data)
 
   attributes_data <- attributes(data)
-  data <- copy(data)
   cols_all <- names(data) # before setDT, because names makes reference
+  data <- copy(data)
 
   if (!is.data.table(data)) {
     setDT(data)

@@ -23,6 +23,10 @@ function used on object passed to \code{data} parameter.
 For chosen columns, move \code{NA} to right or left (i.e. across columns)
 or to top or bottom (i.e. across rows).
 }
+\note{
+Internally, function is mainly based on \code{\link[=data.table]{data.table}} functions and thus enabling parallel computation
+is possible. To do this, just call \code{\link[data.table]{setDTthreads}} before calling \code{na_move} function.
+}
 \examples{
 data <- data.frame(col1 = c(1, 2, 3),
                    col2 = c(NA, NA, 4),
