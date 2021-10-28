@@ -64,7 +64,7 @@ test_that("errors if prerequisites not met", {
   expect_error(na_move(df_simple), "Argument passed to data cannot contain column named '....idx'")
 })
 
-df_list <- data.table::data.table(col1 = list(c(1, 1), NA, c(2, 2), NA),
+df_list <- data.table::data.table(col1 = list(c(1, 1, NA), NA, c(2, 2), NA),
                       col2 = c(2, NA, NA, NA),
                       col3 = c(1, 2, NA, NA),
                       col4 = c(NA, NA, 1, 2))
