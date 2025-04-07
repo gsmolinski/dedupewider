@@ -16,8 +16,7 @@
 #' Type of columns passed to \code{cols} will be coerced to the most general type, although sometimes when
 #' column will contain only \code{NA}, that column will be of type logical.
 #' @note
-#' Internally, function is mainly based on \code{\link[=data.table]{data.table}} functions and thus enabling parallel computation
-#' is possible. To do this, just call \code{\link[data.table]{setDTthreads}} before calling \code{na_move} function.
+#' To enable parallel computation, call \code{\link[data.table]{setDTthreads}} before calling \code{na_move} function.
 #' @export
 #' @import data.table
 #' @examples

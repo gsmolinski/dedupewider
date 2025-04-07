@@ -41,8 +41,7 @@ Although \code{\link[base]{duplicated}} or \code{\link[base]{unique}} treats mis
 Type of columns passed to \code{cols_dedupe} will be coerced to the most general type.
 }
 \note{
-Internally, function is mainly based on \code{\link[=data.table]{data.table}} functions and thus enabling parallel computation
-is possible. To do this, just call \code{\link[data.table]{setDTthreads}} before calling \code{dedupe_wide} function.
+To enable parallel computation, call \code{\link[data.table]{setDTthreads}} before calling \code{dedupe_wide} function.
 }
 \examples{
 x <- data.frame(tel_1 = c(111, 222, 444, 555),

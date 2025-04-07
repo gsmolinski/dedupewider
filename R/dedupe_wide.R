@@ -19,8 +19,7 @@
 #' @return If duplicated data found - data.frame with changed columns' names and optionally additional columns (in some cases less columns, depends on \code{enable_drop} argument). Otherwise data.frame without changes (except row names removed).
 #' @export
 #' @import data.table
-#' @note Internally, function is mainly based on \code{\link[=data.table]{data.table}} functions and thus enabling parallel computation
-#' is possible. To do this, just call \code{\link[data.table]{setDTthreads}} before calling \code{dedupe_wide} function.
+#' @note To enable parallel computation, call \code{\link[data.table]{setDTthreads}} before calling \code{dedupe_wide} function.
 #' @examples
 #' x <- data.frame(tel_1 = c(111, 222, 444, 555),
 #'                 tel_2 = c(222, 666, 666, 555),
